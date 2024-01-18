@@ -1,5 +1,5 @@
 # Data Preprocessing is done here
-from data_handling.data_parameters import SMP_LOC, T_LOC, EXP_LOC, LABELS, PARAMS
+from data_handling.data_parameters import SMP_LOC, EXP_LOC, LABELS, PARAMS
 
 # external imports
 import re
@@ -20,7 +20,6 @@ from snowmicropyn import Profile, loewe2012, windowing
 # make paths from imported data locations (str)
 SMP_LOC = Path(SMP_LOC)
 EXP_LOC = Path(EXP_LOC)
-T_LOC = Path(T_LOC)
 
 
 # exports pnt files (our smp profiles!) to csv files in a target directory
@@ -180,7 +179,7 @@ def label_pd(df, profile):
     last_marker = profile.markers.get("surface")
     # markers are assigned to the pd.DataFrame in a sorted manner
     for marker in sorted(profile.markers, key=profile.markers.get, reverse=False):
-        if marker is not "surface" or "ground" or "not_labelled":
+        if marker != "surface" or "ground" or "not_labelled":
             # everything between last_marker and new marker gets labelled
             sel_rows = (df["distance"] > last_marker) & (df["distance"] <= profile.markers.get(marker))
             integer_label = LABELS.get(marker.translate({ord(ch): None for ch in '0123456789'}))

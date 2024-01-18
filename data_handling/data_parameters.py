@@ -1,95 +1,83 @@
 # Here are all the important parameters for the data preprocssing
 
-# Set folder location of smp data (pnt format)
-SMP_LOC = "/home/julia/Documents/University/BA/Data/Arctic_updated/"
-# Set file location of temperature data
-T_LOC = "/home/julia/Documents/University/BA/Data/Arctic/MOSAiC_ICE_Temperature.csv"
-# Set folder name were export files get saved
-EXP_LOC = "data/smp_profiles"
-# labels for the different grain type markers
+from pathlib import Path
+# standard paths for PNT and NPZ files
+parentdir = Path(__file__).parent.parent.as_posix()
+#SMP_LOC = parentdir + "/data/smp_pnt_files_scaled_edited/"
+#EXP_LOC = parentdir + "/data/smp_profiles/"
+SMP_LOC =  "C:/Users/jille/Documents/LWD/snowdragon-ALps/data/smp_pnt_files_scaled_edited/" #change later
+EXP_LOC = "C:/Users/jille/Documents/LWD/snowdragon-Alps/data/smp_profiles/" #change later
+
+#To do von Felix &Tamara
+#TODO: ATTENTION! update corr_heatmap() in run_visualization if LABELS are added!
+#TODO: ATTENTION! update visualize_tree() in plot_data if LABELS are added!
+
 LABELS = {
     "not_labelled": 0,
     "surface": 1,
     "ground": 2,
-    "dh": 3,
-    "dhid": 4,
-    "mfdh": 5,
-    "rgwp": 6,
-    "df": 7,
-    "if": 8,
-    "ifwp": 9,
-    "sh": 10,
-    "snow-ice": 11,
-    "dhwp": 12,
-    "mfcl": 13,
-    "mfsl": 14,
-    "mfcr": 15,
-    "pp": 16,
-    "rare": 17,
+    "pp": 3,
+    "ppgp": 4,
+    "df": 5,
+    "rg": 6,
+    "fc": 7,
+    "dh": 8,
+    "sh": 9,
+    "fcxr": 10,
+    "mf": 11,
+    "mfcr": 12,
+    "if": 13,
 }
 
-# ATTENTION: rare is also added to the dict during preprocessing (sum_up_labels)!
 ANTI_LABELS = {
     0: "not_labelled",
     1: "surface",
     2: "ground",
-    3: "dh",
-    4: "dhid",
-    5: "mfdh",
-    6: "rgwp",
-    7: "df",
-    8: "if",
-    9: "ifwp",
-    10: "sh",
-    11: "snow-ice",
-    12: "dhwp",
-    13: "mfcl",
-    14: "mfsl",
-    15: "mfcr",
-    16: "pp",
-    17: "rare",
+    3: "pp",
+    4: "ppgp",
+    5: "df",
+    6: "rg",
+    7: "fc",
+    8: "dh",
+    9: "sh",
+    10: "fcxr",
+    11: "mf",
+    12: "mfcr",
+    13: "if"
 }
 
 ANTI_LABELS_LONG = {
     0: "Not labelled",
     1: "Surface",
     2: "Ground",
-    3: "Depth Hoar",
-    4: "Depth Hoar\nIndurated",
-    5: "Melted Form\nDepth Hoar",
-    6: "Rounded Grains\nWind Packed",
-    7: "Decomposed\nand Fragmented\nPrecipitation Particles",
-    8: "Ice Formation",
-    9: "Ice Formation\nWind Packed",
-    10: "Surface Hoar",
-    11: "Snow Ice",
-    12: "Depth Hoar\nWind Packed",
-    13: "Melted Form\nClustered Rounded Grains",
-    14: "Melted Form\nSlush",
-    15: "Melt-freeze\nCrust",
-    16: "Precipitation\nParticles",
-    17: "Rare",
+    3: "Precipitation particles",
+    4: "Graupel",
+    5: "Decomposed and fragmented\nprecipitation particles",
+    6: "Rounded grains",
+    7: "Faceted crystals",
+    8: "Depth hoar",
+    9: "Surface hoar",
+    10: "Rounding faceted particles",
+    11: "Melt forms",
+    12: "Melt-freeze crust",
+    13: "Ice formations",
 }
 
 COLORS = {
     0: "dimgray",
     1: "chocolate",
     2: "darkslategrey",
-    3: "lightseagreen", #20b2aa
-    4: "lightsteelblue", #b0c4de
-    5: "midnightblue", #191970 # "mediumaquamarine"
-    6: "tomato", #ff6347
-    7: "mediumvioletred",
-    8: "firebrick",
-    9: "lightgreen",
-    10: "orange",
-    11: "paleturquoise", #afeeee
-    12: "gold", #ffd700
-    13: "orchid",
-    14: "fuchsia",
-    15: "saddlebrown",
-    16: "green", #2ca02c
-    17: "blue", #0000ff
+    3: "00FF00",
+    4: "#808080",
+    5: "#228B22",
+    6: "#FFB6C1",
+    7: "#ADD8E6",
+    8: "#0000FF",
+    9: "#FF00FF",
+    10: "#9CE6AF",#own mixture of fc and df
+    11: "#FF0000",
+    12: "#6E0000",#own mixture of mf and black
+    13: "#00FFFF",
 }
 
 # arguments for Preprocessing
@@ -167,4 +155,4 @@ MODEL_COLORS = {
 # Selection of snow layer types that we use
 # TODO: Turn into dictionary with colors?
 # Sorted by amount of examples?
-SNOW_TYPES_SELECTION = ["rgwp", "dh", "dhid", "dhwp", "mfdh", "pp", "rare"]
+SNOW_TYPES_SELECTION = ["pp","ppgp","df","rg","fc","dh","sh","fcxr","mf","mfcr","if"]
