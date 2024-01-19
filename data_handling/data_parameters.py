@@ -3,12 +3,10 @@
 from pathlib import Path
 # standard paths for PNT and NPZ files
 parentdir = Path(__file__).parent.parent.as_posix()
-#SMP_LOC = parentdir + "/data/smp_pnt_files_scaled_edited/"
-#EXP_LOC = parentdir + "/data/smp_profiles/"
-SMP_LOC =  "C:/Users/jille/Documents/LWD/snowdragon-ALps/data/smp_pnt_files_scaled_edited/" #change later
-EXP_LOC = "C:/Users/jille/Documents/LWD/snowdragon-Alps/data/smp_profiles/" #change later
+SMP_LOC = parentdir + "/data/smp_pnt_files_scaled_edited/"
+EXP_LOC = parentdir + "/data/smp_profiles/"
 
-#To do von Felix &Tamara
+#To dos von Felix &Tamara
 #TODO: ATTENTION! update corr_heatmap() in run_visualization if LABELS are added!
 #TODO: ATTENTION! update visualize_tree() in plot_data if LABELS are added!
 
