@@ -1,9 +1,10 @@
 # Here are all the important parameters for the data preprocssing
 
 from pathlib import Path
-# standard paths for PNT and NPZ files
+# default paths for raw smp data and preprocessed data
+#change for different folder stucture
 parentdir = Path(__file__).parent.parent.as_posix()
-SMP_LOC = parentdir + "/data/smp_pnt_files_scaled_edited/"
+SMP_LOC = parentdir + "/data/smp_pnt_files/"
 EXP_LOC = parentdir + "/data/smp_profiles/"
 
 #To dos von Felix &Tamara
