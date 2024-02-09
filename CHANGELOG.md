@@ -28,6 +28,40 @@ EXP_LOC = parentdir + "/data/smp_profiles/"
 python_requires=">=3.6, <3.12"
 ```
 
--
+Package `graphviz` must be added
 
-## Preprcessing
+## Preprocessing
+
+### Data_preprocessing.py
+
+In the script `data_handling/data_preprocessing.py` some changes has to be done:
+
+-   The progressbar:The following lines must be changed so that the progress bar fits the size of the data set:
+    Before declaring the `file_generator` the `file_generator_size` has to be declared
+
+```
+file_generator_size = len(list(glob.iglob(match_pnt, recursive=True)))
+```
+
+Then update the `with tqdm(total=3825) as pbar:` at two parts of the script
+
+```
+with tqdm(total=file_generator_size) as pbar:
+```
+
+-   in the def `idx_to_string` the first 4 numbers of the SMP data used must be added in an elif. For example in Snowdragon-Alps:
+
+```
+ elif "S36M" in string_idx:
+        return int("5" + string_idx[-4:].zfill(6))
+```
+
+-   in the def `idx_to_string` the return statement has to be changed so that the program terminates if the correct data cannot be found. For this you can delete the `return 0` and write instead:
+
+```
+    raise ValueError("SMP naming convention is unknown. Please add another elif line in idx_to_int to handle your SMP naming convention.")
+```
+
+### Run_models.py
+
+ongoing changes here...
