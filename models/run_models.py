@@ -33,7 +33,6 @@ from sklearn.neighbors import KNeighborsClassifier
 from imblearn.ensemble import BalancedRandomForestClassifier
 
 # filenames where data and preprocessed data is stored
-#SMP_NPZ = "data/all_smp_profiles_updated.npz" 
 SMP_NPZ = "data/all_smp_profiles.npz"
 #PREPROCESS_FILE = "data/preprocessed_data_k5.txt" 
 PREPROCESS_FILE = "data/preprocess_data.txt"
@@ -122,24 +121,24 @@ def sum_up_labels(smp, labels, name, label_idx, color="blue"):
     return smp
 
 
-# def remove_nans_mosaic(smp):
-#     """ Very specific function to remove special nans and negative values. The selection was done manually.
-#     Don't use this function for a different dataset or for any kind of updated dataset.
-#     Params:
-#         smp (pd.DataFrame): SMP Dataframe
-#     Returns:
-#         pd.DataFrame: the same smp dataframe but with removed nans and without negative values
-#     """
-#     # remove profile 4002260.0 -> only nans and always the same negative mean value
-#     smp = smp.loc[smp["smp_idx"] != 4002260.0, :]
-#     # remove part of the profile 4002627, since the last half has only 0 as values and later negative values (and other nonsense)
-#     smp = smp.drop(range(625705, 625848), axis=0).reset_index(drop=True)
-#     # the rest can be solved by forward filling (checked this manually)
-#     smp = smp.fillna(method='ffill')
-#     # drop another row that contains a negative value for no reason
-#     smp = smp.drop(397667, axis=0).reset_index(drop=True)
+def remove_nans_mosaic(smp):
+    """ Very specific function to remove special nans and negative values. The selection was done manually.
+    Don't use this function for a different dataset or for any kind of updated dataset.
+    Params:
+        smp (pd.DataFrame): SMP Dataframe
+    Returns:
+        pd.DataFrame: the same smp dataframe but with removed nans and without negative values
+    """
+    # remove profile 4002260.0 -> only nans and always the same negative mean value
+    smp = smp.loc[smp["smp_idx"] != 4002260.0, :]
+    # remove part of the profile 4002627, since the last half has only 0 as values and later negative values (and other nonsense)
+    smp = smp.drop(range(625705, 625848), axis=0).reset_index(drop=True)
+    # the rest can be solved by forward filling (checked this manually)
+    smp = smp.fillna(method='ffill')
+    # drop another row that contains a negative value for no reason
+    smp = smp.drop(397667, axis=0).reset_index(drop=True)
 
-#     return smp
+    return smp
 
 def normalize_mosaic(smp):
     """ Normalizes all the features that should be normalized in the data. Don't use this method for other data!
@@ -189,8 +188,11 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
     """
     # 1. Load dataframe with smp data
     smp_org = load_data(smp_file_name)
+    print(smp_org)
+
     # remove nans
-    #--smp_org = remove_nans_mosaic(smp_org)
+    smp_org = remove_nans_mosaic(smp_org)
+    exit(0)
 
     # 2. Visualize before normalization
     if visualize: visualize_original_data(smp_org)
@@ -203,15 +205,15 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
     # 4. Sum up certain classes if necessary (alternative: do something to balance the dataset)
     # check: which profiles (and how many) have melted datapoints?
     #print("Profiles in which melted forms occur:")
-    #--meltform_profiles = smp.loc[(smp["label"] == LABELS["mfcl"]) | (smp["label"] == LABELS["mfcr"]), "smp_idx"].unique()
-    #--print(smp.loc[(smp["label"] == LABELS["sh"]), "smp_idx"].unique())
+    #meltform_profiles = smp.loc[(smp["label"] == LABELS["mfcl"]) | (smp["label"] == LABELS["mfcr"]), "smp_idx"].unique()
+    #print(smp.loc[(smp["label"] == LABELS["sh"]), "smp_idx"].unique())
     #meltform_profiles_str = [int_to_idx(profile) for profile in meltform_profiles]
     # exclude these profiles!
-    #--smp = smp[~smp["smp_idx"].isin(meltform_profiles)]
+    #smp = smp[~smp["smp_idx"].isin(meltform_profiles)]
     # rename all df points to pp
-    #--smp.loc[smp["label"] == LABELS["df"], "label"] = LABELS["pp"]
+    #smp.loc[smp["label"] == LABELS["df"], "label"] = LABELS["pp"]
     # keep: 6, 3, 4, 12, 5, 16, 8, 10: rgwp, dh, dhid, dhwp, mfdh, pp(, if, sh)
-    #--smp = sum_up_labels(smp, ["if", "sh"], name="rare", label_idx=17)
+    smp = sum_up_labels(smp, ["if", "sh"], name="rare", label_idx=14)
 
     print(smp["label"].value_counts())
 
@@ -237,17 +239,17 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
         smp = pd.DataFrame(smp_with_tsne)
 
     print(smp)
-    # # 6. Prepare unlabelled data for two of the semisupervised modles:
-    # # prepare dataset of unlabelled data
-    # unlabelled_smp = smp.loc[(smp["label"] == 0)].copy()
-    # # set unlabelled_smp label to -1
-    # unlabelled_smp.loc[:, "label"] = -1
-    # unlabelled_smp_x = unlabelled_smp.drop(["label", "smp_idx"], axis=1)
-    # unlabelled_smp_y = unlabelled_smp["label"]
-    # # sample in order to make it time-wise possible
-    # # OBSERVATION: the more data we include the worse the scores for the models become
-    # unlabelled_x = unlabelled_smp_x.sample(sample_size_unlabelled) # complete data: 650 326
-    # unlabelled_y = unlabelled_smp_y.sample(sample_size_unlabelled) # we can do this, because labels are only -1 anyway
+    # 6. Prepare unlabelled data for two of the semisupervised modles:
+    # prepare dataset of unlabelled data
+    unlabelled_smp = smp.loc[(smp["label"] == 0)].copy()
+    # set unlabelled_smp label to -1
+    unlabelled_smp.loc[:, "label"] = -1
+    unlabelled_smp_x = unlabelled_smp.drop(["label", "smp_idx"], axis=1)
+    unlabelled_smp_y = unlabelled_smp["label"]
+    # sample in order to make it time-wise possible
+    # OBSERVATION: the more data we include the worse the scores for the models become
+    unlabelled_x = unlabelled_smp_x.sample(sample_size_unlabelled) # complete data: 650 326
+    unlabelled_y = unlabelled_smp_y.sample(sample_size_unlabelled) # we can do this, because labels are only -1 anyway
 
     # 7. Split up the labelled data into training and test data
     x_train, x_test, y_train, y_test, smp_idx_train, smp_idx_test = my_train_test_split(smp)

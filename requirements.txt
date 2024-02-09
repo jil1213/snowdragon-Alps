@@ -1,6 +1,7 @@
 cycler
 cytoolz
 GitPython
+graphviz
 h5py
 imbalanced-learn
 Jinja2

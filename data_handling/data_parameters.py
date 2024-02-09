@@ -26,6 +26,7 @@ LABELS = {
     "mf": 11,
     "mfcr": 12,
     "if": 13,
+    "rare":14,
 }
 
 ANTI_LABELS = {
@@ -42,7 +43,8 @@ ANTI_LABELS = {
     10: "fcxr",
     11: "mf",
     12: "mfcr",
-    13: "if"
+    13: "if",
+    14: "rare"
 }
 
 ANTI_LABELS_LONG = {
@@ -60,6 +62,7 @@ ANTI_LABELS_LONG = {
     11: "Melt forms",
     12: "Melt-freeze crust",
     13: "Ice formations",
+    14: "rare"
 }
 
 COLORS = {
@@ -77,6 +80,7 @@ COLORS = {
     11: "#FF0000",
     12: "#6E0000",#own mixture of mf and black
     13: "#00FFFF",
+    14: "blue",
 }
 
 # arguments for Preprocessing
