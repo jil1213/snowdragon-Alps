@@ -20,7 +20,7 @@ EXP_LOC = parentdir + "/data/smp_profiles/"
 -   For process normal SMP files there is no Temperatur given so you can delete the variable T_LOC and their calls.
 
 -   `data_handling/data_parameters.py`: when different grain types classification are used the `labels` and `anti_labels` and `anti_labels_long` and `colors`.
--   `data_handling/data_parameters.py`: in 'SNOW_TYPES_SELECTION = []' the right grain types must be written
+-   `data_handling/data_parameters.py`: in `SNOW_TYPES_SELECTION = []` the right grain types must be written
 -   `requirements.txt`: the version can be deleted or updated when there are conflicts
 -   `setup.py`: there could be problems with the python_requires, an update might be necessary.changed for Snowdragon-Alps
 
@@ -28,7 +28,7 @@ EXP_LOC = parentdir + "/data/smp_profiles/"
 python_requires=">=3.6, <3.12"
 ```
 
-Package `graphviz` must be added
+-   Package `graphviz` must be added
 
 ## Preprocessing
 

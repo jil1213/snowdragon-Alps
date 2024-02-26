@@ -31,6 +31,7 @@ from sklearn.manifold import TSNE
 from sklearn.model_selection import train_test_split, StratifiedKFold #, cross_validate, cross_val_score, cross_val_predict
 from sklearn.neighbors import KNeighborsClassifier
 from imblearn.ensemble import BalancedRandomForestClassifier
+from sklearn.datasets import load_iris
 
 # filenames where data and preprocessed data is stored
 SMP_NPZ = "data/all_smp_profiles.npz"
@@ -189,6 +190,15 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
     # 1. Load dataframe with smp data
     smp_org = load_data(smp_file_name)
     print(smp_org)
+    # save dataframe as csv for check for nans and - values
+    smp_org.to_csv('panda.csv', sep=',', encoding='utf-8')
+    #check for nans 
+    check_nan_in_df = smp_org.isnull().values.any()
+    print (check_nan_in_df) #output is 'false' -> so there are no nans
+    #check for negative
+    count_nan_in_df = (smp_org<0).sum().sum()
+    print ('Count of negative: ' + str(count_nan_in_df))
+    exit(0)
 
     # remove nans
     smp_org = remove_nans_mosaic(smp_org)
