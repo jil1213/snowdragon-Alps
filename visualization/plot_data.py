@@ -155,26 +155,26 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
     ax = plt.gca()
     fig = plt.gcf()
     ax_in_plot = ax.inset_axes([0.15,0.5,0.4,0.4])
-    if profile_name == "S31H0368":
-        # retrieve original smp signal
-        # load npz in smp_profiles_updated
-        raw_file = Profile.load("../Data/Arctic_updated/sn_smp_31/exdata/PS122-3_30-42/" + profile_name + ".pnt")
-        raw_profile = raw_file.samples_within_snowpack(relativize=True)
-        sns.lineplot(raw_profile["distance"], raw_profile["force"], ax=ax_in_plot, color="darkgrey")
+    # if profile_name == "S31H0368": #not necessary for us
+    #     # retrieve original smp signal
+    #     # load npz in smp_profiles_updated
+    #     raw_file = Profile.load("../Data/Arctic_updated/sn_smp_31/exdata/PS122-3_30-42/" + profile_name + ".pnt")
+    #     raw_profile = raw_file.samples_within_snowpack(relativize=True)
+    #     sns.lineplot(raw_profile["distance"], raw_profile["force"], ax=ax_in_plot, color="darkgrey")
 
-    if isinstance(profile_name, str):
-        smp_wanted = idx_to_int(profile_name)
-    else:
-        smp_wanted = profile_name
+    # if isinstance(profile_name, str):
+    #     smp_wanted = idx_to_int(profile_name)
+    # else:
+    #     smp_wanted = profile_name
 
-    smp_profile = smp[smp["smp_idx"] == smp_wanted]
+    # smp_profile = smp[smp["smp_idx"] == smp_wanted]
 
-    sns.lineplot(smp_profile["distance"], smp_profile["mean_force"], ax=ax_in_plot)# , color="darkslategrey"
-    ax_in_plot.set_xlabel("Distance from Surface [mm]")
-    ax_in_plot.set_ylabel("Mean Force [N]")
-    ax_in_plot.set_xlim(0, len(smp_profile)-1)
-    ax_in_plot.set_ylim(0, 10)
-    ax_in_plot.set_title("Snow Micro Pen Signal") #of\nProfile {}".format(profile_name)
+    # sns.lineplot(smp_profile["distance"], smp_profile["mean_force"], ax=ax_in_plot)# , color="darkslategrey"
+    # ax_in_plot.set_xlabel("Distance from Surface [mm]")
+    # ax_in_plot.set_ylabel("Mean Force [N]")
+    # ax_in_plot.set_xlim(0, len(smp_profile)-1)
+    # ax_in_plot.set_ylim(0, 10)
+    # ax_in_plot.set_title("Snow Micro Pen Signal") #of\nProfile {}".format(profile_name)
 
     # add background colors!
     last_label_num = 1

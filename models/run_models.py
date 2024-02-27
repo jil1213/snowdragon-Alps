@@ -190,25 +190,32 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
     # 1. Load dataframe with smp data
     smp_org = load_data(smp_file_name)
     print(smp_org)
-    # save dataframe as csv for check for nans and - values
-    smp_org.to_csv('panda.csv', sep=',', encoding='utf-8')
-    #check for nans 
-    check_nan_in_df = smp_org.isnull().values.any()
-    print (check_nan_in_df) #output is 'false' -> so there are no nans
-    #check for negative
-    count_nan_in_df = (smp_org<0).sum().sum()
-    print ('Count of negative: ' + str(count_nan_in_df))
-    exit(0)
-
+    
+    ##Check for nans and negative values -only for new dataset and if youre unsure 
+    # # save dataframe as csv for check for nans and - values
+    # smp_org.to_csv('panda.csv', sep=',', encoding='utf-8')
+    
+    # #check for nans 
+    # check_nan_in_df = smp_org.isnull().values.any()
+    # print (check_nan_in_df) #output is 'false' -> so there are no nans
+    
+    # #check for negative
+    # count_nan_in_df = (smp_org<0).sum().sum()
+    # print ('Count of negative: ' + str(count_nan_in_df))
+    
+    # # Print negative values per column
+    # print (smp_org[smp_org<0].count())
+    
     # remove nans
-    smp_org = remove_nans_mosaic(smp_org)
-    exit(0)
+    #smp_org = remove_nans_mosaic(smp_org)
+    #exit(0)
 
     # 2. Visualize before normalization
     if visualize: visualize_original_data(smp_org)
 
     # 3. Normalize
     smp = normalize_mosaic(smp_org)
+    exit(0)
 
     # CHANGE HERE - YOUR FAVORITE LABELS IN THE DATA! -do we need this or not? 
 

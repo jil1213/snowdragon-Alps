@@ -64,4 +64,28 @@ with tqdm(total=file_generator_size) as pbar:
 
 ### Run_models.py
 
-ongoing changes here...
+-   update def `preprocess_dataset`
+    After step 1. Load dataframe, you should check again if there are any nans or negative values (except for the gradient negative values are ok here!) For testing you should uncomment the following section
+
+```
+    ##Check for nans and negative values -only for new dataset and if youre unsure
+    # # save dataframe as csv for check for nans and - values
+    # smp_org.to_csv('panda.csv', sep=',', encoding='utf-8')
+
+    # #check for nans
+    # check_nan_in_df = smp_org.isnull().values.any()
+    # print (check_nan_in_df) #output is 'false' -> so there are no nans
+
+    # #check for negative
+    # count_nan_in_df = (smp_org<0).sum().sum()
+    # print ('Count of negative: ' + str(count_nan_in_df))
+
+    # # Print negative values per column
+    # print (smp_org[smp_org<0].count())
+
+    # remove nans
+    #smp_org = remove_nans_mosaic(smp_org)
+    #exit(0)
+```
+
+If there is no wrong data you can comment this section again

@@ -69,7 +69,7 @@ COLORS = {
     0: "dimgray",
     1: "chocolate",
     2: "darkslategrey",
-    3: "00FF00",
+    3: "#00FF00",
     4: "#808080",
     5: "#228B22",
     6: "#FFB6C1",
