@@ -205,10 +205,10 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
     
     # # Print negative values per column
     # print (smp_org[smp_org<0].count())
-    
-    # remove nans
-    #smp_org = remove_nans_mosaic(smp_org)
     #exit(0)
+    
+    # #remove nans
+    #smp_org = remove_nans_mosaic(smp_org)
 
     # 2. Visualize before normalization
     if visualize: visualize_original_data(smp_org)
