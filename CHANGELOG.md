@@ -111,6 +111,12 @@ with tqdm(total=file_generator_size) as pbar:
 if profile_name == "S36M0335":
 ```
 
+the path to the `raw_file`should be also updated. When data is stored in `data/` you can use a simmilar path to:
+
+```
+raw_file = Profile.load("./data/smp_pnt_files/" + profile_name + ".pnt")
+```
+
 -   the seaborn plot has been udated, so a new syntax for lineplot is needed. Update the following statements
 
 ```
@@ -154,4 +160,8 @@ from data_handling.data_parameters import LABELS
     cleaned_labels.remove(1) # remove surface
     cleaned_labels.remove(2) # remove ground
     corr_heatmap(smp, labels=cleaned_labels, file_name=path+"corr_heatmap_all.png")# Correlation does not help for categorical + continuous data - use ANOVA instead
+```
+
+```
+
 ```

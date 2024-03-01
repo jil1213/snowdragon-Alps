@@ -19,7 +19,9 @@ import random
 import argparse
 import numpy as np
 import pandas as pd
-import tensorflow.keras.models
+import tensorflow as tf
+import keras
+from keras import layers
 
 # surpress pandas warning SettingWithCopyWarning
 pd.options.mode.chained_assignment = None
@@ -215,7 +217,6 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
 
     # 3. Normalize
     smp = normalize_mosaic(smp_org)
-    exit(0)
 
     # CHANGE HERE - YOUR FAVORITE LABELS IN THE DATA! -do we need this or not? 
 
@@ -230,9 +231,9 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
     # rename all df points to pp
     #smp.loc[smp["label"] == LABELS["df"], "label"] = LABELS["pp"]
     # keep: 6, 3, 4, 12, 5, 16, 8, 10: rgwp, dh, dhid, dhwp, mfdh, pp(, if, sh)
-    smp = sum_up_labels(smp, ["if", "sh"], name="rare", label_idx=14)
+    #smp = sum_up_labels(smp, ["if", "sh"], name="rare", label_idx=14)
 
-    print(smp["label"].value_counts())
+    #print(smp["label"].value_counts())
 
     # save normalized data
     dict = smp.to_dict(orient="list")
@@ -240,7 +241,7 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
 
     # 5. Visualize the data after normalization
     if visualize: visualize_normalized_data(smp)
-
+    exit(0)
     # if wished, make dimension reduction here!
     if tsne is not None:
         labels = smp["label"]
@@ -848,7 +849,7 @@ def main():
     test = "data/preprocessed_data_test.txt"
 
     if args.preprocess:
-        data = preprocess_dataset(smp_file_name=args.smp_npz, output_file=args.preprocess_file, visualize=False) #
+        data = preprocess_dataset(smp_file_name=args.smp_npz, output_file=args.preprocess_file, visualize=True) #
     else:
         with open(args.preprocess_file, "rb") as myFile:
             data = pickle.load(myFile)

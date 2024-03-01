@@ -37,13 +37,13 @@ def visualize_normalized_data(smp):
     path = "output/plots_data/normalized/"
     # ATTENTION: don't use bogplots or single profiles after normalization!
     #plt.rcParams.update({"figure.dpi": 180})
-    smp_profile_name = "S31H0368"
+    smp_profile_name = "S36M0335"
     # HOW BALANCED IS THE LABELLED DATASET?
     plot_balancing(smp, file_name=path+"class_balance_normalized.svg", title=None)
     # SHOW THE DATADISTRIBUTION OF ALL FEATURES
     pairwise_features(smp, features=["label", "distance", "var_force", "mean_force", "delta_4", "lambda_4", "gradient"], samples=200, file_name=path+"pairwise_features.png")
     # SHOW HEATMAP OF ALL FEATURES (with what are the labels correlated the most?)
-    corr_heatmap(smp, labels=[3, 4, 5, 6, 12, 16, 17], file_name=path+"corr_heatmap_all.png")
+    corr_heatmap(smp, labels=[3, 4, 5, 6, 12], file_name=path+"corr_heatmap_all.png") #removed , 16, 17
     # SHOW HEATMAP BETWEEN FEATURES
     corr_heatmap(smp, labels=None, file_name=path+"corr_heatmap_features.png")
     # Correlation does not help for categorical + continuous data - use ANOVA instead

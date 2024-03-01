@@ -11,7 +11,7 @@ with open(path.join(ROOT, "requirements.txt")) as f:
 setup(
     name="snowdragon-Alps",
     version="1.0",
-    description="Automatic snow layer classification from SMP measurements.",
+    description="Automatic snow layer classification to Alps standard from SMP measurements.",
     author="Julia Kaltenborn",
     author_email="julia@kaltenborn.info",
     install_requires=requirements,

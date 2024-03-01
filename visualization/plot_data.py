@@ -158,7 +158,7 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
     if profile_name == "S36M0335": 
          # retrieve original smp signal
          # load npz in smp_profiles_updated
-         raw_file = Profile.load("../Data/Arctic_updated/sn_smp_31/exdata/PS122-3_30-42/" + profile_name + ".pnt")
+         raw_file = Profile.load("./data/smp_pnt_files/" + profile_name + ".pnt")
          raw_profile = raw_file.samples_within_snowpack(relativize=True)
          sns.lineplot(data=(raw_profile["distance"], raw_profile["force"]), ax=ax_in_plot, color="darkgrey")
 
@@ -213,7 +213,7 @@ def corr_heatmap(smp, labels=None, file_name="output/plots_data/corr_heatmap.png
     if labels is None:
         smp_filtered = smp.drop("label", axis=1)
         smp_corr = smp_filtered.corr()
-        mask = np.triu(np.ones_like(smp_corr, dtype=np.bool))
+        mask = np.triu(np.ones_like(smp_corr, dtype=np.bool_))
         mask = mask[1:, :-1]
         corr = smp_corr.iloc[1:, :-1].copy()
         sns.heatmap(corr, mask=mask, annot=False, fmt=".2f", vmin=-1, vmax=1,
@@ -469,9 +469,9 @@ def visualize_tree(rf, x_train, y_train, feature_names=None, tree_idx=0, min_sam
         y_train[y_train==5.0] = 2
         y_train[y_train==12.0] = 3
         y_train[y_train==4.0] = 4
-        y_train[y_train==17.0] = 5
-        y_train[y_train==16.0] = 6
-        anti_labels = {0:"rgwp", 1:"dh", 2: "mfdh", 3:"dhwp", 4:"dhid", 5:"rare", 6:"pp"}
+        #y_train[y_train==17.0] = 5
+        #y_train[y_train==16.0] = 6
+        anti_labels = {0:"rg", 1:"pp", 2: "df", 3:"mfcr", 4:"ppgp"} #removed , 5:"rare", 6:"pp"
         class_names = [anti_labels[label] for label in y_train.unique()]
 
         feature_names = x_train.columns
