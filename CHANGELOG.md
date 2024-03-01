@@ -71,6 +71,10 @@ with tqdm(total=file_generator_size) as pbar:
     raise ValueError("SMP naming convention is unknown. Please add another elif line in idx_to_int to handle your SMP naming convention.")
 ```
 
+## Models
+
+First you have to preprocess your data for training
+
 ### Run_models.py
 
 -   update def `preprocess_dataset`
@@ -127,6 +131,12 @@ sns.lineplot(data=(raw_profile["distance"], raw_profile["force"]), ax=ax_in_plot
 sns.lineplot(data=(smp_profile["distance"], smp_profile["mean_force"]), ax=ax_in_plot)# , color="darkslategrey"
 ```
 
+-   update your labels you want to visualize in def ´visualize_tree()´ in line 474
+
+```
+ anti_labels = {0:"rg", 1:"pp", 2: "df", 3:"mfcr", 4:"ppgp"} #removed , 5:"rare", 6:"pp"
+```
+
 ### plot_profile.py
 
 -   the seaborn plot has been udated, so a new syntax for lineplot is needed. Update all `sns.lineplot()` statements (8 statements)
@@ -142,6 +152,18 @@ into:
 sns.lineplot(data=(x,y),...)
 ```
 
+-   update your labels you want to visualize in def ´compare_bogplots()´ in line 290
+
+```
+ all_labels = [6.0, 3.0, 4.0, 12.0, 5.0]
+```
+
+-   update your labelsfor your legend in def ´compare_model_and_profiles()´ in line 400
+
+```
+ all_labels = [6.0, 3.0, 4.0, 12.0, 5.0]
+```
+
 ### run_visualization
 
 -   import `LABELS`
@@ -151,6 +173,12 @@ from data_handling.data_parameters import LABELS
 ```
 
 -   change in def `def visualize_original_data(smp):` the smp_profile_name to a profile name of your dataset you want to plot
+
+-   update the labels you want to plot in the corr_heatmap in line 46
+    ´´´
+    corr_heatmap(smp, labels=[3, 4, 5, 6, 12], file_name=path+"corr_heatmap_all.png") #removed , 16, 17
+    ´´´
+
 -   in def `def visualize_original_data(smp):` calling the heatmap must be updated to:
 
 ```
