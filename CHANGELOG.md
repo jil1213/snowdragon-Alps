@@ -31,6 +31,10 @@ python_requires=">=3.6, <3.12"
 
 -   Package `graphviz` must be added
 
+## Labeling
+
+The data is labeled in `data_handling/data_parameters.py`. If new labels are needed you have to update the script. You also have to make changes in:
+
 ## Preprocessing
 
 ### Data_preprocessing.py
@@ -190,6 +194,20 @@ from data_handling.data_parameters import LABELS
     corr_heatmap(smp, labels=cleaned_labels, file_name=path+"corr_heatmap_all.png")# Correlation does not help for categorical + continuous data - use ANOVA instead
 ```
 
+### plot_dim_reduction
+
+Line 81
+Small Change for error message -not done yet
+
+```
+File "C:\Users\jille\Documents\LWD\snowdragon-Alps\visualization\plot_dim_reduction.py", line 81, in pca
+    ax = plt.figure(figsize=(16,10)).gca(projection="3d")
+TypeError: FigureBase.gca() got an unexpected keyword argument 'projection'#
 ```
 
+Instead writting
+
+```
+fig = plt.figure(figsize=(16,10))
+ax = fig.add_subplot(111, projection='3d')
 ```
