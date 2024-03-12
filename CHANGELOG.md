@@ -6,7 +6,11 @@ This file documents all the steps of changes that need to be made to modify the 
 
 First of all some general settings must be done to run the code.
 
--   `data_handling/data_parameters.py`: The folder structure for the SMP_LOC and EXP_LOC must be change in the own folder structure. For a variable path those calls can be used:
+### data_parameters.py
+
+in `data_handling/data_parameters.py` there have to be a few changes:
+
+-   The folder structure for the SMP_LOC and EXP_LOC must be change in the own folder structure. For a variable path those calls can be used:
 
 ```
 from pathlib import Path
@@ -19,11 +23,20 @@ EXP_LOC = parentdir + "/data/smp_profiles/"
 
 -   To process normal SMP files there is no Temperatur given so you can delete the variable T_LOC and their calls.
 
--   `data_handling/data_parameters.py`: when different grain types classification are used the `labels` and `anti_labels` and `anti_labels_long` and `colors`.
--   `data_handling/data_parameters.py`: the used colours must be checked, colour 3 must be updated to `3: "#00FF00",` (# was missing before)
--   `data_handling/data_parameters.py`: in `SNOW_TYPES_SELECTION = []` the right grain types must be written
--   `requirements.txt`: the version can be deleted or updated when there are conflicts
--   `setup.py`: there could be problems with the python_requires, an update might be necessary.changed for Snowdragon-Alps
+-   when different grain types classification are used the `labels` and `anti_labels` and `anti_labels_long` and `colors`.
+-   the used colours must be checked, colour 3 must be updated to `3: "#00FF00",` (# was missing before)
+-   in `SNOW_TYPES_SELECTION = []` the right grain types must be written
+-   the dictonary `USED_LABELS` must be added. Fill in the labels you want to use for xour classification
+-   the dictonary `RARE_LABELS` must be added. Fill in the labels you want to add for a rare label
+
+### requirements.txt
+
+-   the version can be deleted or updated when there are conflicts
+-
+
+### setup.py
+
+-   there could be problems with the python_requires, an update might be necessary.changed for Snowdragon-Alps
 
 ```
 python_requires=">=3.6, <3.12"
@@ -119,7 +132,7 @@ First you have to preprocess your data for training
 if profile_name == "S36M0335":
 ```
 
-the path to the `raw_file`should be also updated. When data is stored in `data/` you can use a simmilar path to:
+the path to the `raw_file` should be also updated. When data is stored in `data/` you can use a simmilar path to:
 
 ```
 raw_file = Profile.load("./data/smp_pnt_files/" + profile_name + ".pnt")
@@ -135,37 +148,76 @@ sns.lineplot(data=(raw_profile["distance"], raw_profile["force"]), ax=ax_in_plot
 sns.lineplot(data=(smp_profile["distance"], smp_profile["mean_force"]), ax=ax_in_plot)# , color="darkslategrey"
 ```
 
--   update your labels you want to visualize in def ´visualize_tree()´ in line 474
+-   update your labels you want to visualize in def `visualize_tree()` in line 474.
 
 ```
- anti_labels = {0:"rg", 1:"pp", 2: "df", 3:"mfcr", 4:"ppgp"} #removed , 5:"rare", 6:"pp"
+ anti_labels = [ANTI_LABELS[label] for label in y_train.unique()]
+```
+
+You can also comment the direct decision which label gets which decision tree label and the defintion of class names (line 467)
+
+```
+ # deciding directly which label gets which decision tree label
+        #y_train[y_train==6.0] = 0
+        #y_train[y_train==3.0] = 1
+        #y_train[y_train==5.0] = 2
+        #y_train[y_train==12.0] = 3
+        #y_train[y_train==4.0] = 4
+        #y_train[y_train==17.0] = 5
+        #y_train[y_train==16.0] = 6
+        anti_labels = [ANTI_LABELS[label] for label in y_train.unique()]
+        #class_names = [anti_labels[label] for label in y_train.unique()]
 ```
 
 ### plot_profile.py
+
+-   import `USED_LABELS`:
+    ```
+      from data_handling.data_parameters import USED_LABELS
+    ```
+
+```
+
 
 -   the seaborn plot has been udated, so a new syntax for lineplot is needed. Update all `sns.lineplot()` statements (8 statements)
     update:
 
 ```
+
     sns.lineplot(x,y,...)
+
 ```
 
 into:
 
 ```
+
 sns.lineplot(data=(x,y),...)
+
+```
+
+-   update your labels for your legend in def `ini_bogplots()` in Line 102
+
+```
+
+all_labels = USED_LABELS
+
 ```
 
 -   update your labels you want to visualize in def ´compare_bogplots()´ in line 290
 
 ```
- all_labels = [6.0, 3.0, 4.0, 12.0, 5.0]
-```
 
--   update your labelsfor your legend in def ´compare_model_and_profiles()´ in line 400
+all_labels = USED_LABELS
 
 ```
- all_labels = [6.0, 3.0, 4.0, 12.0, 5.0]
+
+-   update your labels for your legend in def ´compare_model_and_profiles()´ in line 400
+
+```
+
+all_labels = USED_LABELS
+
 ```
 
 ### run_visualization
@@ -173,7 +225,9 @@ sns.lineplot(data=(x,y),...)
 -   import `LABELS`
 
 ```
+
 from data_handling.data_parameters import LABELS
+
 ```
 
 -   change in def `def visualize_original_data(smp):` the smp_profile_name to a profile name of your dataset you want to plot
@@ -186,28 +240,49 @@ from data_handling.data_parameters import LABELS
 -   in def `def visualize_original_data(smp):` calling the heatmap must be updated to:
 
 ```
-# SHOW HEATMAP OF ALL FEATURES (with what are the labels correlated the most?)
+
+    # SHOW HEATMAP OF ALL FEATURES (with what are the labels correlated the most?)
+
     cleaned_labels = list(LABELS.values())
     cleaned_labels.remove(0) # remove not labelled
     cleaned_labels.remove(1) # remove surface
     cleaned_labels.remove(2) # remove ground
     corr_heatmap(smp, labels=cleaned_labels, file_name=path+"corr_heatmap_all.png")# Correlation does not help for categorical + continuous data - use ANOVA instead
-```
+
+````
+
+- in the def `visualize_normalized_data()` update file_name for following plots:
+    Line 63
+    ```
+    pca(smp, n=24, biplot=False, file_name=path + "pca")
+    ```
+    Line 64
+    ```
+    tsne(smp, file_name=path + "tsne")
+    ```
+    Line 66
+    ```
+    tsne_pca(smp, n=5, file_name=path + "tsne_pca")
+    ```
 
 ### plot_dim_reduction
 
-Line 81
-Small Change for error message -not done yet
+-   the gca() statement was updated. Change the following statements.
+    Line 81, 145, 210
 
-```
-File "C:\Users\jille\Documents\LWD\snowdragon-Alps\visualization\plot_dim_reduction.py", line 81, in pca
+````
+
     ax = plt.figure(figsize=(16,10)).gca(projection="3d")
-TypeError: FigureBase.gca() got an unexpected keyword argument 'projection'#
-```
-
-Instead writting
 
 ```
-fig = plt.figure(figsize=(16,10))
-ax = fig.add_subplot(111, projection='3d')
+
+change to
+
+```
+
+        fig = plt.figure(figsize=(16,10))
+        ax = fig.add_subplot(projection='3d')
+
+```
+
 ```

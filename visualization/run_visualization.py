@@ -39,29 +39,29 @@ def visualize_normalized_data(smp):
     #plt.rcParams.update({"figure.dpi": 180})
     smp_profile_name = "S36M0335"
     # HOW BALANCED IS THE LABELLED DATASET?
-    # plot_balancing(smp, file_name=path+"class_balance_normalized.svg", title=None)
-    # # SHOW THE DATADISTRIBUTION OF ALL FEATURES
-    # pairwise_features(smp, features=["label", "distance", "var_force", "mean_force", "delta_4", "lambda_4", "gradient"], samples=200, file_name=path+"pairwise_features.png")
-    # # SHOW HEATMAP OF ALL FEATURES (with what are the labels correlated the most?)
-    # corr_heatmap(smp, labels=[3, 4, 5, 6, 12], file_name=path+"corr_heatmap_all.png") #removed , 16, 17
-    # # SHOW HEATMAP BETWEEN FEATURES
-    # corr_heatmap(smp, labels=None, file_name=path+"corr_heatmap_features.png")
-    # # Correlation does not help for categorical + continuous data - use ANOVA instead
-    # # FEATURE "EXTRACTION"
-    # anova(smp, file_name=path+"anova.txt", tablefmt="latex_raw") # latex_raw also possible
-    # # RANDOM FOREST FEATURE EXTRACTION
-    # forest_extractor(smp, file_name=path+"forest_features.txt", plot=False, tablefmt="latex_raw")
-    # # PLOT ALL NORMALIZED FEATURES AS LINES IN ONE PROFILE
-    # smp_features(smp, smp_name=smp_profile_name, features=["mean_force", "var_force", "min_force_4", "max_force_4", "L_12", "gradient"], file_name=path+smp_profile_name+"_features.png")
-    # plt.rcParams.update({"figure.dpi": 250})
-    # # PLOT BOGPLOT
-    # bog_plot(smp, file_name=path+"bog_plot.png")
-    # # PLOT ALL IN ONE PLOT
-    # all_in_one_plot(smp, title=None, file_name=path+"overview_data_norm.png", profile_name=smp_profile_name)
+    plot_balancing(smp, file_name=path+"class_balance_normalized.svg", title=None)
+    # SHOW THE DATADISTRIBUTION OF ALL FEATURES
+    pairwise_features(smp, features=["label", "distance", "var_force", "mean_force", "delta_4", "lambda_4", "gradient"], samples=200, file_name=path+"pairwise_features.png")
+    # SHOW HEATMAP OF ALL FEATURES (with what are the labels correlated the most?)
+    corr_heatmap(smp, labels=[3, 4, 5, 6, 12], file_name=path+"corr_heatmap_all.png") #removed , 16, 17
+    # SHOW HEATMAP BETWEEN FEATURES
+    corr_heatmap(smp, labels=None, file_name=path+"corr_heatmap_features.png")
+    # Correlation does not help for categorical + continuous data - use ANOVA instead
+    # FEATURE "EXTRACTION"
+    anova(smp, file_name=path+"anova.txt", tablefmt="latex_raw") # latex_raw also possible
+    # RANDOM FOREST FEATURE EXTRACTION
+    forest_extractor(smp, file_name=path+"forest_features.txt", plot=False, tablefmt="latex_raw")
+    # PLOT ALL NORMALIZED FEATURES AS LINES IN ONE PROFILE
+    smp_features(smp, smp_name=smp_profile_name, features=["mean_force", "var_force", "min_force_4", "max_force_4", "L_12", "gradient"], file_name=path+smp_profile_name+"_features.png")
+    plt.rcParams.update({"figure.dpi": 250})
+    # PLOT BOGPLOT
+    bog_plot(smp, file_name=path+"bog_plot.png")
+    # PLOT ALL IN ONE PLOT
+    all_in_one_plot(smp, title=None, file_name=path+"overview_data_norm.png", profile_name=smp_profile_name)
 
     # PCA and TSNE
-    #pca(smp, n=24, biplot=False, file_name=path + "pca")
-    #tsne(smp, file_name=path + "tsne")
+    pca(smp, n=24, biplot=False, file_name=path + "pca")
+    tsne(smp, file_name=path + "tsne")
     print("finished tsne")
     tsne_pca(smp, n=5, file_name=path + "tsne_pca")
     exit(0)
