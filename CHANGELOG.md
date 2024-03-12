@@ -180,41 +180,31 @@ You can also comment the direct decision which label gets which decision tree la
     update:
 
     ```
-
     sns.lineplot(x,y,...)
-
     ```
 
 into:
 
     ```
-
     sns.lineplot(data=(x,y),...)
-
     ```
 
 -   update your labels for your legend in def `ini_bogplots()` in Line 102
 
     ```
-
     all_labels = USED_LABELS
-
     ```
 
 -   update your labels you want to visualize in def ´compare_bogplots()´ in line 290
 
     ```
-
     all_labels = USED_LABELS
-
     ```
 
 -   update your labels for your legend in def ´compare_model_and_profiles()´ in line 400
 
     ```
-
     all_labels = USED_LABELS
-
     ```
 
 ### run_visualization
@@ -222,9 +212,7 @@ into:
 -   import `LABELS`
 
     ```
-
     from data_handling.data_parameters import LABELS
-
     ```
 
 -   change in def `def visualize_original_data(smp):` the smp_profile_name to a profile name of your dataset you want to plot
@@ -238,7 +226,6 @@ into:
 -   in def `def visualize_original_data(smp):` calling the heatmap must be updated to:
 
     ```
-
         # SHOW HEATMAP OF ALL FEATURES (with what are the labels correlated the most?)
 
         cleaned_labels = list(LABELS.values())
@@ -246,7 +233,6 @@ into:
         cleaned_labels.remove(1) # remove surface
         cleaned_labels.remove(2) # remove ground
         corr_heatmap(smp, labels=cleaned_labels, file_name=path+"corr_heatmap_all.png")# Correlation does not help for categorical + continuous data - use ANOVA instead
-
     ```
 
 -   in the def `visualize_normalized_data()` update file_name for following plots:
@@ -269,16 +255,12 @@ into:
     Line 81, 145, 210
 
     ```
-
         ax = plt.figure(figsize=(16,10)).gca(projection="3d")
-
     ```
 
 change to
 
     ```
-
             fig = plt.figure(figsize=(16,10))
             ax = fig.add_subplot(projection='3d')
-
     ```
