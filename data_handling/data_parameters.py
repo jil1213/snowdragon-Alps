@@ -7,9 +7,10 @@ parentdir = Path(__file__).parent.parent.as_posix()
 SMP_LOC = parentdir + "/data/smp_pnt_files/"
 EXP_LOC = parentdir + "/data/smp_profiles/"
 
-#To dos von Felix &Tamara
-#TODO: ATTENTION! update corr_heatmap() in run_visualization if LABELS are added!
-#TODO: ATTENTION! update visualize_tree() in plot_data if LABELS are added!
+# set used labels 
+USED_LABELS = [3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0]
+#simply set to zero if you have no rare labels! 
+RARE_LABELS = []
 
 LABELS = {
     "not_labelled": 0,

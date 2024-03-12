@@ -12,7 +12,7 @@ import matplotlib.colors as mcolors
 
 from tqdm import tqdm
 from data_handling.data_preprocessing import idx_to_int
-from data_handling.data_parameters import COLORS, ANTI_LABELS, ANTI_LABELS_LONG, LABELS
+from data_handling.data_parameters import COLORS, ANTI_LABELS, ANTI_LABELS_LONG, LABELS, USED_LABELS
 
 # TODO
 # make function to compare predicted profiles where we dont have the ground truth!
@@ -99,7 +99,7 @@ def ini_bogplots(preds, chosen_profiles, model_name, file_name):
     # producing the legend for the labels
     # remove /n from antilabels
     # Snow Grain Legend
-    all_labels = [6.0, 3.0, 4.0, 12.0, 5.0, 16.0] # no rare
+    all_labels = USED_LABELS # no rare
     anti_colors = {ANTI_LABELS_LONG[key] : value for key, value in COLORS.items() if key in all_labels}
     markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='') for color in anti_colors.values()]
 
@@ -287,7 +287,7 @@ def compare_bogplots(all_smps, model_names, file_name="output/results/compare_bo
     # producing the legend for the labels
     # remove /n from antilabels
     # Snow Grain Legend
-    all_labels = [6.0, 3.0, 4.0, 12.0, 5.0] #removed 16,17
+    all_labels = USED_LABELS
     anti_colors = {ANTI_LABELS_LONG[key] : value for key, value in COLORS.items() if key in all_labels}
     # two markers: correct and wrongly predicted
     markers = [(plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle=''), plt.Line2D([0,0],[0,0], color=color, marker='o', linestyle='', alpha=0.25)) for color in anti_colors.values()]
@@ -397,7 +397,7 @@ def compare_model_and_profiles(smp_trues, smp_preds, smp_names, model_names, tit
 
     # Snow Grain Legend
     # grain types
-    all_labels = [6.0, 3.0, 4.0, 12.0, 5.0] #changed here, no labels 16, 17, just removed
+    all_labels = USED_LABELS
     anti_colors = {ANTI_LABELS_LONG[key] : value for key, value in COLORS.items() if key in all_labels}
     markers = [plt.Line2D([0,0],[0,0],color=color, marker='o', linestyle='', alpha=0.5) for color in anti_colors.values()]
     # line markers

@@ -464,15 +464,15 @@ def visualize_tree(rf, x_train, y_train, feature_names=None, tree_idx=0, min_sam
 
     if (x_train is not None) and (y_train is not None):
         # deciding directly which label gets which decision tree label
-        y_train[y_train==6.0] = 0
-        y_train[y_train==3.0] = 1
-        y_train[y_train==5.0] = 2
-        y_train[y_train==12.0] = 3
-        y_train[y_train==4.0] = 4
+        #y_train[y_train==6.0] = 0
+        #y_train[y_train==3.0] = 1
+        #y_train[y_train==5.0] = 2
+        #y_train[y_train==12.0] = 3
+        #y_train[y_train==4.0] = 4
         #y_train[y_train==17.0] = 5
         #y_train[y_train==16.0] = 6
-        anti_labels = {0:"rg", 1:"pp", 2: "df", 3:"mfcr", 4:"ppgp"} #removed , 5:"rare", 6:"pp"
-        class_names = [anti_labels[label] for label in y_train.unique()]
+        anti_labels = [ANTI_LABELS[label] for label in y_train.unique()]
+        #class_names = [anti_labels[label] for label in y_train.unique()]
 
         feature_names = x_train.columns
 

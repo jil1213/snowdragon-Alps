@@ -213,7 +213,7 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
     #smp_org = remove_nans_mosaic(smp_org)
 
     # 2. Visualize before normalization
-    if visualize: visualize_original_data(smp_org)
+    #if visualize: visualize_original_data(smp_org)
 
     # 3. Normalize
     smp = normalize_mosaic(smp_org)
