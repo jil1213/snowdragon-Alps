@@ -32,7 +32,6 @@ EXP_LOC = parentdir + "/data/smp_profiles/"
 ### requirements.txt
 
 -   the version can be deleted or updated when there are conflicts
--
 
 ### setup.py
 
@@ -144,6 +143,8 @@ raw_file = Profile.load("./data/smp_pnt_files/" + profile_name + ".pnt")
 sns.lineplot(data=(raw_profile["distance"], raw_profile["force"]), ax=ax_in_plot, color="darkgrey")
 ```
 
+change into
+
 ```
 sns.lineplot(data=(smp_profile["distance"], smp_profile["mean_force"]), ax=ax_in_plot)# , color="darkslategrey"
 ```
@@ -175,10 +176,6 @@ You can also comment the direct decision which label gets which decision tree la
     ```
       from data_handling.data_parameters import USED_LABELS
     ```
-
-```
-
-
 -   the seaborn plot has been udated, so a new syntax for lineplot is needed. Update all `sns.lineplot()` statements (8 statements)
     update:
 
@@ -249,9 +246,9 @@ from data_handling.data_parameters import LABELS
     cleaned_labels.remove(2) # remove ground
     corr_heatmap(smp, labels=cleaned_labels, file_name=path+"corr_heatmap_all.png")# Correlation does not help for categorical + continuous data - use ANOVA instead
 
-````
+```
 
-- in the def `visualize_normalized_data()` update file_name for following plots:
+-   in the def `visualize_normalized_data()` update file_name for following plots:
     Line 63
     ```
     pca(smp, n=24, biplot=False, file_name=path + "pca")
@@ -286,3 +283,4 @@ change to
 ```
 
 ```
+````
