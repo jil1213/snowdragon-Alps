@@ -26,7 +26,7 @@ EXP_LOC = parentdir + "/data/smp_profiles/"
 -   when different grain types classification are used the `labels` and `anti_labels` and `anti_labels_long` and `colors`.
 -   the used colours must be checked, colour 3 must be updated to `3: "#00FF00",` (# was missing before)
 -   in `SNOW_TYPES_SELECTION = []` the right grain types must be written
--   the dictonary `USED_LABELS` must be added. Fill in the labels you want to use for xour classification
+-   the dictonary `USED_LABELS` must be added. Fill in the labels you want to use for your classification
 -   the dictonary `RARE_LABELS` must be added. Fill in the labels you want to add for a rare label
 
 ### requirements.txt
@@ -121,6 +121,39 @@ First you have to preprocess your data for training
     #smp_org = remove_nans_mosaic(smp_org)
 ```
 
+-   in def `preprocess_dataset()` a flag `preprocess_dataset(ignore_unlabelled=False)`
+    add in section 6. an if-statement:
+    the old code is in the else part
+    ```
+    if ignore_unlabelled:
+            unlabelled_x = None
+            unlabelled_y = None
+            unlabelled_smp_x = None
+        else:
+            # set unlabelled_smp label to -1
+            unlabelled_smp.loc[:, "label"] = -1
+            unlabelled_smp_x = unlabelled_smp.drop(["label", "smp_idx"], axis=1)
+            unlabelled_smp_y = unlabelled_smp["label"]
+            # sample in order to make it time-wise possible
+            # OBSERVATION: the more data we include the worse the scores for the models become
+            unlabelled_x = unlabelled_smp_x.sample(sample_size_unlabelled) # complete data: 650 326
+            unlabelled_y = unlabelled_smp_y.sample(sample_size_unlabelled) # we can do this, because labels are only -1 anyway
+    ```
+    When calling the function in the main() also add the flag:
+    In Line 852
+    ```
+    data = preprocess_dataset(
+            smp_file_name=args.smp_npz, output_file=args.preprocess_file, visualize=False, ignore_unlabelled=True)
+    ```
+
+### cv_handler.py
+
+change line 262 in def `cv_manual()`
+
+```
+k_idx = np.resize(np.arange(1, k+1), len(profiles))
+```
+
 ## Visualization
 
 ### plot_data.py
@@ -172,9 +205,9 @@ You can also comment the direct decision which label gets which decision tree la
 
 ### plot_profile.py
 
--   import `USED_LABELS`:
+-   import `USED_LABELS` and `RARE_LABELS`:
     ```
-      from data_handling.data_parameters import USED_LABELS
+      from data_handling.data_parameters import USED_LABELS, RARE_LABELS
     ```
 -   the seaborn plot has been udated, so a new syntax for lineplot is needed. Update all `sns.lineplot()` statements (8 statements)
     update:
@@ -198,13 +231,13 @@ into:
 -   update your labels you want to visualize in def ´compare_bogplots()´ in line 290
 
     ```
-    all_labels = USED_LABELS
+    all_labels = USED_LABELS + RARE_LABELS
     ```
 
 -   update your labels for your legend in def ´compare_model_and_profiles()´ in line 400
 
     ```
-    all_labels = USED_LABELS
+    all_labels = USED_LABELS + RARE_LABELS
     ```
 
 ### run_visualization
