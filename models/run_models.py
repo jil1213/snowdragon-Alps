@@ -169,7 +169,7 @@ def normalize_mosaic(smp):
     smp = normalize(smp, "dist_ground", min=smp["dist_ground"].min(), max=smp["dist_ground"].max())
     return smp
 
-def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_size_unlabelled=1000, tsne=None):
+def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_size_unlabelled=1000, tsne=None, ignore_unlabelled=False):
     """ Preprocesses the complete smp data and returns what is needed for the models.
     Parameters:
         smp_file_name (str): where the complete smp data is saved
@@ -182,6 +182,7 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
         tsne (int): None means no dim reduction. int indicated that the data's
             dimensionality should be reduced with the help of tsne.
             The number indicates how many dimensions should remain.
+        ignore_unlabelled (bool): if the unlabelled data should be ignored
     Returns:
         (dict): "x_train", "y_train", " x_test" and "y_test" are the prepared and normalized training and test data.
                 "x_train_all" and "y_train_all" are both labelled and unlabelled data in one data set.
@@ -241,7 +242,7 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
 
     # 5. Visualize the data after normalization
     if visualize: visualize_normalized_data(smp)
-    exit(0)
+    
     # if wished, make dimension reduction here!
     if tsne is not None:
         labels = smp["label"]
@@ -260,14 +261,19 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
     # 6. Prepare unlabelled data for two of the semisupervised modles:
     # prepare dataset of unlabelled data
     unlabelled_smp = smp.loc[(smp["label"] == 0)].copy()
-    # set unlabelled_smp label to -1
-    unlabelled_smp.loc[:, "label"] = -1
-    unlabelled_smp_x = unlabelled_smp.drop(["label", "smp_idx"], axis=1)
-    unlabelled_smp_y = unlabelled_smp["label"]
-    # sample in order to make it time-wise possible
-    # OBSERVATION: the more data we include the worse the scores for the models become
-    unlabelled_x = unlabelled_smp_x.sample(sample_size_unlabelled) # complete data: 650 326
-    unlabelled_y = unlabelled_smp_y.sample(sample_size_unlabelled) # we can do this, because labels are only -1 anyway
+    if ignore_unlabelled:
+        unlabelled_x = None
+        unlabelled_y = None
+        unlabelled_smp_x = None
+    else: 
+        # set unlabelled_smp label to -1
+        unlabelled_smp.loc[:, "label"] = -1
+        unlabelled_smp_x = unlabelled_smp.drop(["label", "smp_idx"], axis=1)
+        unlabelled_smp_y = unlabelled_smp["label"]
+        # sample in order to make it time-wise possible
+        # OBSERVATION: the more data we include the worse the scores for the models become
+        unlabelled_x = unlabelled_smp_x.sample(sample_size_unlabelled) # complete data: 650 326
+        unlabelled_y = unlabelled_smp_y.sample(sample_size_unlabelled) # we can do this, because labels are only -1 anyway
 
     # 7. Split up the labelled data into training and test data
     x_train, x_test, y_train, y_test, smp_idx_train, smp_idx_test = my_train_test_split(smp)
@@ -849,7 +855,11 @@ def main():
     test = "data/preprocessed_data_test.txt"
 
     if args.preprocess:
-        data = preprocess_dataset(smp_file_name=args.smp_npz, output_file=args.preprocess_file, visualize=True) #
+        data = preprocess_dataset(
+            smp_file_name=args.smp_npz, 
+            output_file=args.preprocess_file, 
+            visualize=False, 
+            ignore_unlabelled=True) 
     else:
         with open(args.preprocess_file, "rb") as myFile:
             data = pickle.load(myFile)

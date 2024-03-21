@@ -64,7 +64,6 @@ def visualize_normalized_data(smp):
     tsne(smp, file_name=path + "tsne")
     print("finished tsne")
     tsne_pca(smp, n=5, file_name=path + "tsne_pca")
-    exit(0)
 
 def visualize_original_data(smp):
     """ Visualizing some things of the original data

@@ -10,7 +10,7 @@ EXP_LOC = parentdir + "/data/smp_profiles/"
 # set used labels 
 USED_LABELS = [3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0]
 #simply set to zero if you have no rare labels! 
-RARE_LABELS = []
+RARE_LABELS = [] #14.0 when using data type rare
 
 LABELS = {
     "not_labelled": 0,
