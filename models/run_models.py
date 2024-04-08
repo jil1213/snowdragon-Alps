@@ -35,10 +35,8 @@ from sklearn.neighbors import KNeighborsClassifier
 from imblearn.ensemble import BalancedRandomForestClassifier
 from sklearn.datasets import load_iris
 
-# filenames where data and preprocessed data is stored
-SMP_NPZ = "data/all_smp_profiles.npz"
-#PREPROCESS_FILE = "data/preprocessed_data_k5.txt" 
-PREPROCESS_FILE = "data/preprocess_data.txt"
+from data_handling.data_parameters import SMP_ORIGINAL_NPZ, SMP_NORMALIZED_NPZ, SMP_PREPROCESSED_TXT
+
  
 # Explanation
 # python -m models.run_models --preprocess
@@ -47,8 +45,8 @@ PREPROCESS_FILE = "data/preprocess_data.txt"
 parser = argparse.ArgumentParser(description="Evaluate or validate the models performances. If not already done, preprocess the data beforehand.")
 
 # File arguments
-parser.add_argument("--smp_npz", default=SMP_NPZ, type=str, help="Name of the united npz file")
-parser.add_argument("--preprocess_file", default=PREPROCESS_FILE, type=str, help="Name of the txt file where the preprocessed data is stored.")
+parser.add_argument("--smp_npz", default=SMP_ORIGINAL_NPZ, type=str, help="Name of the united npz file")
+parser.add_argument("--preprocess_file", default=SMP_PREPROCESSED_TXT, type=str, help="Name of the txt file where the preprocessed data is stored.")
 # what-is-done-arguments
 parser.add_argument("--preprocess", action="store_true", help="Data must be preprocessed and stored in 'preprocessing_file'.")
 parser.add_argument("--evaluate", action="store_true", help="Models are evaluated. Data from 'smp_npz' is used.")
@@ -540,7 +538,7 @@ def train_and_store_models(data, models=["all"], **kwargs):
                 else:
                     pickle.dump(fitted_model, handle)
         else:
-            fitted_model.save("models/stored_models/" + model_type + ".hdf5")
+            fitted_model.save("models/stored_models/" + model_type + ".keras")
 
 
 def evaluate_all_models(data, file_scores=None, file_scores_lables=None, overwrite_tables=True, **params):

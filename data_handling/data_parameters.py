@@ -7,6 +7,16 @@ parentdir = Path(__file__).parent.parent.as_posix()
 SMP_LOC = parentdir + "/data/smp_pnt_files/"
 EXP_LOC = parentdir + "/data/smp_profiles/"
 
+# Example profiles - one for plotting and the folder where they live
+#EXAMPLE_SMP_NAME = "S31H0368"
+#EXAMPLE_SMP_PATH = "../Data/Arctic_updated/sn_smp_31/exdata/PS122-3_30-42/"
+
+# filenames where data, normalized data and preprocessed data is stored
+SMP_ORIGINAL_NPZ = "data/all_smp_profiles.npz"
+SMP_NORMALIZED_NPZ = "data/all_smp_profiles_updated_normalized.npz" #dont need dthis one 
+SMP_PREPROCESSED_TXT = "data/preprocess_data.txt"
+
+
 # set used labels 
 USED_LABELS = [3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0, 13.0]
 #simply set to zero if you have no rare labels! 
