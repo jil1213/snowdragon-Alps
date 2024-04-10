@@ -21,6 +21,19 @@ SMP_LOC = parentdir + "/data/smp_pnt_files/"
 EXP_LOC = parentdir + "/data/smp_profiles/"
 ```
 
+-   Also the folder structure for the stored data (normalized and preprocessed) should be added here. For example:
+
+```
+# Example profiles - one for plotting and the folder where they live
+#EXAMPLE_SMP_NAME = "S31H0368"
+#EXAMPLE_SMP_PATH = "../Data/Arctic_updated/sn_smp_31/exdata/PS122-3_30-42/"
+
+# filenames where data, normalized data and preprocessed data is stored
+SMP_ORIGINAL_NPZ = "data/all_smp_profiles.npz"
+SMP_NORMALIZED_NPZ = "data/all_smp_profiles_updated_normalized.npz" #dont need this one
+SMP_PREPROCESSED_TXT = "data/preprocess_data.txt"
+```
+
 -   To process normal SMP files there is no Temperatur given so you can delete the variable T_LOC and their calls.
 
 -   when different grain types classification are used the `labels` and `anti_labels` and `anti_labels_long` and `colors`.
@@ -93,6 +106,13 @@ First you have to preprocess your data for training
 
 ### Run_models.py
 
+-   import Paths were data is stored: `from data_handling.data_parameters import SMP_ORIGINAL_NPZ, SMP_NORMALIZED_NPZ, SMP_PREPROCESSED_TXT`
+    Add the right file arguments in the praser:
+    ```
+            # File arguments
+        parser.add_argument("--smp_npz", default=SMP_ORIGINAL_NPZ, type=str, help="Name of the united npz file")
+        parser.add_argument("--preprocess_file", default=SMP_PREPROCESSED_TXT, type=str, help="Name of the txt file where the preprocessed data is stored.")
+    ```
 -   update def `preprocess_dataset`
     After step 1. Load dataframe, you should check again if there are any nans or negative values (except for the gradient negative values are ok here!) For testing you should uncomment the following section
 
@@ -144,6 +164,10 @@ First you have to preprocess your data for training
     ```
     data = preprocess_dataset(
             smp_file_name=args.smp_npz, output_file=args.preprocess_file, visualize=False, ignore_unlabelled=True)
+    ```
+-   in the def train_and_store_models() in Line 541
+    ```
+     fitted_model.save("models/stored_models/" + model_type + ".keras")
     ```
 
 ### cv_handler.py
