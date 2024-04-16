@@ -594,8 +594,8 @@ def evaluate_all_models(data, file_scores=None, file_scores_lables=None, overwri
                  "Random Forest", "Balanced Random Forest", "Support Vector Machine", "K-nearest Neighbors", "Easy Ensemble",
                  "Self Trainer", "Label Propagation",
                  "LSTM", "BLSTM", "Encoder Decoder"]
-    all_models = ["rf_bal", "lstm", "enc_dec", "self_trainer"]
-    all_names = ["Balanced Random Forest", "LSTM", "Encoder Decoder", "Self Trainer"]
+    all_models = ["rf_bal"] # all_models = ["rf_bal", "lstm", "enc_dec", "self_trainer"]
+    all_names = ["Balanced Random Forest", "LSTM", "Encoder Decoder", "Self Trainer"] #all_names = ["Balanced Random Forest", "LSTM", "Encoder Decoder", "Self Trainer"]
     # save bogplot for true predictions and all true smps in the folder above
     if (plotting["bog_plot_trues"] is not None) or (plotting["only_trues"]):
         # get important vars

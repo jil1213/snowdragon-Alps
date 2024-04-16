@@ -6,10 +6,11 @@ from pathlib import Path
 parentdir = Path(__file__).parent.parent.as_posix()
 SMP_LOC = parentdir + "/data/smp_pnt_files/"
 EXP_LOC = parentdir + "/data/smp_profiles/"
+EVAL_LOC = parentdir + "/output/evaluation/"
 
 # Example profiles - one for plotting and the folder where they live
-#EXAMPLE_SMP_NAME = "S31H0368"
-#EXAMPLE_SMP_PATH = "../Data/Arctic_updated/sn_smp_31/exdata/PS122-3_30-42/"
+EXAMPLE_SMP_NAME = "S36M0236"
+EXAMPLE_SMP_PATH = "..\data\smp_pnt_files"
 
 # filenames where data, normalized data and preprocessed data is stored
 SMP_ORIGINAL_NPZ = "data/all_smp_profiles.npz"
