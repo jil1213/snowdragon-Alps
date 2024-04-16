@@ -10,7 +10,7 @@ First of all some general settings must be done to run the code.
 
 in `data_handling/data_parameters.py` there have to be a few changes:
 
--   The folder structure for the SMP_LOC and EXP_LOC must be change in the own folder structure. For a variable path those calls can be used:
+-   The folder structure for the SMP_LOC , EXP_LOC and EVAL_LOC (path of output of evaluation) must be change to the own folder structure. For a variable path those calls can be used:
 
 ```
 from pathlib import Path
@@ -19,14 +19,15 @@ from pathlib import Path
 parentdir = Path(__file__).parent.parent.as_posix()
 SMP_LOC = parentdir + "/data/smp_pnt_files/"
 EXP_LOC = parentdir + "/data/smp_profiles/"
+EVAL_LOC = parentdir + "/output/evaluation/"
 ```
 
 -   Also the folder structure for the stored data (normalized and preprocessed) should be added here. For example:
 
 ```
 # Example profiles - one for plotting and the folder where they live
-#EXAMPLE_SMP_NAME = "S31H0368"
-#EXAMPLE_SMP_PATH = "../Data/Arctic_updated/sn_smp_31/exdata/PS122-3_30-42/"
+EXAMPLE_SMP_NAME = "S36M0335"
+EXAMPLE_SMP_PATH = "..\data\smp_pnt_files"
 
 # filenames where data, normalized data and preprocessed data is stored
 SMP_ORIGINAL_NPZ = "data/all_smp_profiles.npz"
@@ -266,13 +267,13 @@ into:
 
 ### run_visualization
 
--   import `LABELS`
+-   import `LABELS, EXAMPLE_SMP_NAME, SMP_ORIGINAL_NPZ, SMP_NORMALIZED_NPZ, SMP_PREPROCESSED_TXT, EVAL_LOC`
 
     ```
-    from data_handling.data_parameters import LABELS
+    from data_handling.data_parameters import LABELS, EXAMPLE_SMP_NAME, SMP_ORIGINAL_NPZ, SMP_NORMALIZED_NPZ, SMP_PREPROCESSED_TXT, EVAL_LOC
     ```
 
--   change in def `def visualize_original_data(smp):` the smp_profile_name to a profile name of your dataset you want to plot
+-   change in def `def visualize_original_data(smp):` the smp_profile_name to a EXAMPLE_SMP_NAME
 
 -   update the labels you want to plot in the corr_heatmap in line 46
 
@@ -294,16 +295,44 @@ into:
 
 -   in the def `visualize_normalized_data()` update file_name for following plots:
     Line 63
+
     ```
     pca(smp, n=24, biplot=False, file_name=path + "pca")
     ```
+
     Line 64
+
     ```
     tsne(smp, file_name=path + "tsne")
     ```
+
     Line 66
+
     ```
     tsne_pca(smp, n=5, file_name=path + "tsne_pca")
+    ```
+
+    also update the smp_profile_name in line 76 to EXAMPLE_SMP_NAME
+
+-   in the def `visualize_results()`
+    update path of `y_pred_probs` (line134) to EVAL_LOC
+
+    ```
+     names, cf_matrices, label_orders, y_trues, y_pred_probs = prepare_evaluation_data(EVAL_LOC)
+    ```
+
+    update SMP indices .txt file in line 182
+
+    ```
+     with open(SMP_PREPROCESSED_TXT, "rb") as myFile:
+    ```
+
+-   in the def `main()` update loaded data in line 200, 201
+
+    ```
+     # load dataframe with smp data
+     smp = load_data(SMP_ORIGINAL_NPZ)
+     smp_preprocessed = load_data(SMP_NORMALIZED_NPZ)
     ```
 
 ### plot_dim_reduction
