@@ -247,6 +247,18 @@ into:
     sns.lineplot(data=(x,y),...)
     ```
 
+-   update in def `smp_unlabelled()` in line 554 an in def `smp_labelled()` in line 585 the lineplot statement:
+
+    ```
+    ax = sns.lineplot(data=(smp_profile["distance"], smp_profile["mean_force"]))
+    ```
+
+    into
+
+    ```
+     ax = sns.lineplot(data=smp_profile, x="distance",y ="mean_force")
+    ```
+
 -   update your labels for your legend in def `ini_bogplots()` in Line 102
 
     ```

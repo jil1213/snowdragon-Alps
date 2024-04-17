@@ -4,7 +4,7 @@
 2,eval_recall,0.539572192513369,Balanced Random Forest
 3,eval_precision,0.62215051585887,Balanced Random Forest
 4,eval_f1,0.5228091589148314,Balanced Random Forest
-5,eval_fit_time,32.28002595901489,Balanced Random Forest
-6,eval_score_time,1.5727653503417969,Balanced Random Forest
+5,eval_fit_time,16.469877004623413,Balanced Random Forest
+6,eval_score_time,0.685652494430542,Balanced Random Forest
 7,eval_roc_auc,0.8807990161216086,Balanced Random Forest
 8,eval_log_loss,1.0034789380698286,Balanced Random Forest

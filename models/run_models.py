@@ -167,7 +167,7 @@ def normalize_mosaic(smp):
     smp = normalize(smp, "dist_ground", min=smp["dist_ground"].min(), max=smp["dist_ground"].max())
     return smp
 
-def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_size_unlabelled=1000, tsne=None, ignore_unlabelled=False):
+def preprocess_dataset(smp_file_name, output_file=None, visualize=True, sample_size_unlabelled=1000, tsne=None, ignore_unlabelled=False):
     """ Preprocesses the complete smp data and returns what is needed for the models.
     Parameters:
         smp_file_name (str): where the complete smp data is saved
@@ -212,7 +212,7 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_
     #smp_org = remove_nans_mosaic(smp_org)
 
     # 2. Visualize before normalization
-    #if visualize: visualize_original_data(smp_org)
+    if visualize: visualize_original_data(smp_org)
 
     # 3. Normalize
     smp = normalize_mosaic(smp_org)
@@ -856,7 +856,7 @@ def main():
         data = preprocess_dataset(
             smp_file_name=args.smp_npz, 
             output_file=args.preprocess_file, 
-            visualize=False, 
+            visualize=True, 
             ignore_unlabelled=True) 
     else:
         with open(args.preprocess_file, "rb") as myFile:

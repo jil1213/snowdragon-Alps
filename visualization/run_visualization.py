@@ -97,7 +97,7 @@ def visualize_original_data(smp):
     # PLOT BOGPLOT
     #bog_plot(smp, file_name=path+"bog_plot.png")
     # PLOT ALL IN ONE PLOT
-    all_in_one_plot(smp, file_name="output/plots_data/original/overview_data_updatedaxis.png", profile_name=smp_profile_name, title=None)
+    #all_in_one_plot(smp, file_name="output/plots_data/original/overview_data_updatedaxis.png", profile_name=smp_profile_name, title=None)
     #all_in_one_plot(smp, file_name="output/plots_data/original/overview_data_indices.png", show_indices=True)
 
 def visualize_results(all_scores, label_acc, label_prec, cf_matrix=True, roc_auc=True, bog_plot=True, comparison=True):
