@@ -170,6 +170,32 @@ First you have to preprocess your data for training
     ```
      fitted_model.save("models/stored_models/" + model_type + ".keras")
     ```
+-   in def `evaluate_all models()` change so that one single model can be evaluated:
+    Add the input parameter models
+    ```
+    def evaluate_all_models(data, models=["all"], file_scores=None, file_scores_lables=None, overwrite_tables=True, **params):
+    ```
+    Add the following if statement:
+    ```
+        if models == ["all"]:
+        all_models = ["baseline", "kmeans", "gmm", "bmm",
+                      "rf", "rf_bal", "svm", "knn", "easy_ensemble",
+                      "self_trainer", "label_spreading",
+                      "lstm", "blstm", "enc_dec"]
+        all_names = ["Majority Vote", "K-means", "Gaussian Mixture Model", "Bayesian Gaussian Mixture Model",
+                     "Random Forest", "Balanced Random Forest", "Support Vector Machine", "K-nearest Neighbors", "Easy Ensemble",
+                     "Self Trainer", "Label Propagation",
+                     "LSTM", "BLSTM", "Encoder Decoder"]
+    else:
+        all_models = models
+        all_names = models
+    ```
+    And delete line 588-598 where all_models and all names were defined
+    -   Add in def `main()` the input arguement model for the vealuation handler
+        ```
+            # EVALUATION
+            if args.evaluate: evaluate_all_models(data, models=args.models, overwrite_tables=False)
+        ```
 
 ### cv_handler.py
 
@@ -245,6 +271,31 @@ into:
 
     ```
     sns.lineplot(data=(x,y),...)
+    ```
+
+-   update the following seaborn lineplot statements:
+    Line351 in `def compare_model_and_profiles()`
+
+    ```
+     signalplot = sns.lineplot(data= smp_true, x="distance", y="mean_force", ax=axs[model_i, smp_i])
+    ```
+
+    Line468 in `def compare_plot()`
+
+    ```
+    signalplot = sns.lineplot(data=smp, x="distance", y="mean_force", ax=ax)
+    ```
+
+    Line653 in `def smp_pair()`
+
+    ```
+    axs[1] = sns.lineplot(data= smp_pred, x= "distance", y= "mean_force")
+    ```
+
+    Line722 in `def smp_pair_both()`
+
+    ```
+    ax = sns.lineplot(data=smp_profile, x="distance", y="mean_force", ax=ax)
     ```
 
 -   update in def `smp_unlabelled()` in line 554 an in def `smp_labelled()` in line 585 the lineplot statement:

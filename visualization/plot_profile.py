@@ -577,6 +577,8 @@ def smp_labelled(smp, smp_name, title=None, file_name="output/plots_data/smp_lab
     """
     # SHOW THE SAME PROFILE WITH LABELS
     if isinstance(smp_name, str):
+        smp_wanted = idx_to_int(smp_name)
+    else:
         smp_wanted = idx_to_int(smp_name)   # convert string to int
         smp_wanted = smp_name
 
