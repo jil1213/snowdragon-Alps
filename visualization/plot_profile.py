@@ -348,7 +348,7 @@ def compare_model_and_profiles(smp_trues, smp_preds, smp_names, model_names, tit
                 alpha = 0.4
                 # plot the ground truth measurement
                 #["Force Signal", "Wrong Classification"]
-                signalplot = sns.lineplot(data= (smp_true["distance"], smp_true["mean_force"]), ax=axs[model_i, smp_i])
+                signalplot = sns.lineplot(data= smp_true, x="distance", y="mean_force", ax=axs[model_i, smp_i])
                 signalplot.set(ylim=height, title=title_names[smp_i])
                 signalplot.set_title(title_names[smp_i], fontsize=10)
                 line_handles.append(signalplot)
@@ -465,7 +465,7 @@ def compare_plot(smp_true, smp_preds, smp_name, model_names, title=None, grid=Tr
             alpha = 0.5
             # plot the ground truth measurement
             #["Force Signal", "Wrong Classification"]
-            signalplot = sns.lineplot(data=(smp["distance"], smp["mean_force"]), ax=ax)
+            signalplot = sns.lineplot(data=smp, x="distance", y="mean_force", ax=ax)
             line_handles.append(signalplot)
             first_ax = False
         else:
@@ -719,7 +719,7 @@ def smp_pair_both(smp_true, smp_pred, smp_name, title=None, file_name="output/pl
     fig, axs = plt.subplots(2, sharex=True, sharey=True)
 
     for ax, smp in zip(axs, smps):
-        ax = sns.lineplot(data=(smp_profile["distance"], smp_profile["mean_force"]), ax=ax)
+        ax = sns.lineplot(data=smp_profile, x="distance", y="mean_force", ax=ax)
         last_label_num = 1
         last_distance = -1
         # going through labels and distance
