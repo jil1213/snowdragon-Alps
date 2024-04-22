@@ -1,10 +1,10 @@
 ,Metrics,Values,Model
-0,eval_balanced_accuracy,0.7050304698103174,Balanced Random Forest
-1,eval_absolute_accuracy,0.539572192513369,Balanced Random Forest
-2,eval_recall,0.539572192513369,Balanced Random Forest
-3,eval_precision,0.62215051585887,Balanced Random Forest
-4,eval_f1,0.5228091589148314,Balanced Random Forest
-5,eval_fit_time,16.469877004623413,Balanced Random Forest
-6,eval_score_time,0.685652494430542,Balanced Random Forest
-7,eval_roc_auc,0.8807990161216086,Balanced Random Forest
-8,eval_log_loss,1.0034789380698286,Balanced Random Forest
+0,eval_balanced_accuracy,0.7050304698103174,rf_bal
+1,eval_absolute_accuracy,0.539572192513369,rf_bal
+2,eval_recall,0.539572192513369,rf_bal
+3,eval_precision,0.62215051585887,rf_bal
+4,eval_f1,0.5228091589148314,rf_bal
+5,eval_fit_time,15.864023923873901,rf_bal
+6,eval_score_time,0.7521789073944092,rf_bal
+7,eval_roc_auc,0.8807990161216086,rf_bal
+8,eval_log_loss,1.0034789380698286,rf_bal

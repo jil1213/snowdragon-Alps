@@ -577,8 +577,7 @@ def smp_labelled(smp, smp_name, title=None, file_name="output/plots_data/smp_lab
     """
     # SHOW THE SAME PROFILE WITH LABELS
     if isinstance(smp_name, str):
-        smp_wanted = idx_to_int(smp_name)
-    else:
+        smp_wanted = idx_to_int(smp_name)   # convert string to int
         smp_wanted = smp_name
 
     smp_profile = smp[smp["smp_idx"] == smp_wanted]
@@ -651,7 +650,7 @@ def smp_pair(smp_true, smp_pred, smp_name, title=None, grid=True, file_name="out
     plt.text(0.01, 0.5, "Ground Truth", fontweight="bold", fontsize=8.5, transform=axs[0].transAxes)
 
     # plot the predicted smp profile - with line and background colors
-    axs[1] = sns.lineplot(data= (smp_pred["distance"], smp_pred["mean_force"]), ax=axs[1])
+    axs[1] = sns.lineplot(data= smp_pred, x= "distance", y= "mean_force") #axs[1] = sns.lineplot(data= (smp_pred["distance"], smp_pred["mean_force"]), ax=axs[1])
     last_label_num = 1
     last_distance = -1
     for label_num, distance in zip(smp_pred["label"], smp_pred["distance"]):

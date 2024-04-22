@@ -167,7 +167,7 @@ def normalize_mosaic(smp):
     smp = normalize(smp, "dist_ground", min=smp["dist_ground"].min(), max=smp["dist_ground"].max())
     return smp
 
-def preprocess_dataset(smp_file_name, output_file=None, visualize=True, sample_size_unlabelled=1000, tsne=None, ignore_unlabelled=False):
+def preprocess_dataset(smp_file_name, output_file=None, visualize=False, sample_size_unlabelled=1000, tsne=None, ignore_unlabelled=False):
     """ Preprocesses the complete smp data and returns what is needed for the models.
     Parameters:
         smp_file_name (str): where the complete smp data is saved
@@ -212,7 +212,7 @@ def preprocess_dataset(smp_file_name, output_file=None, visualize=True, sample_s
     #smp_org = remove_nans_mosaic(smp_org)
 
     # 2. Visualize before normalization
-    if visualize: visualize_original_data(smp_org)
+    #if visualize: visualize_original_data(smp_org)
 
     # 3. Normalize
     smp = normalize_mosaic(smp_org)
@@ -541,7 +541,7 @@ def train_and_store_models(data, models=["all"], **kwargs):
             fitted_model.save("models/stored_models/" + model_type + ".keras")
 
 
-def evaluate_all_models(data, file_scores=None, file_scores_lables=None, overwrite_tables=True, **params):
+def evaluate_all_models(data, models=["all"], file_scores=None, file_scores_lables=None, overwrite_tables=True, **params):
     """ Evaluating each model. Parameters for models are given in params.
     Results can be saved intermediately in a file.
     Parameters:
@@ -551,6 +551,19 @@ def evaluate_all_models(data, file_scores=None, file_scores_lables=None, overwri
         overwrite_tables (bool): If false the tables are not produced newly
         **params: A list for all necessary parameters for the models.
     """
+    if models == ["all"]:
+        all_models = ["baseline", "kmeans", "gmm", "bmm",
+                      "rf", "rf_bal", "svm", "knn", "easy_ensemble",
+                      "self_trainer", "label_spreading",
+                      "lstm", "blstm", "enc_dec"]
+        all_names = ["Majority Vote", "K-means", "Gaussian Mixture Model", "Bayesian Gaussian Mixture Model",
+                     "Random Forest", "Balanced Random Forest", "Support Vector Machine", "K-nearest Neighbors", "Easy Ensemble",
+                     "Self Trainer", "Label Propagation",
+                     "LSTM", "BLSTM", "Encoder Decoder"]
+    else:
+        all_models = models
+        all_names = models
+        
     # set plotting variables:
     # no special labels order (default ascending) and name must be set individually
     save_overall_metrics = True
@@ -585,17 +598,6 @@ def evaluate_all_models(data, file_scores=None, file_scores_lables=None, overwri
                            "baseline": "baseline", "kmeans": "semi_manual",
                            "gmm": "semi_manual", "bmm": "semi_manual"}
 
-
-    all_models = ["baseline", "kmeans", "gmm", "bmm",
-                  "rf", "rf_bal", "svm", "knn", "easy_ensemble",
-                  "self_trainer", "label_spreading",
-                  "lstm", "blstm", "enc_dec"]
-    all_names = ["Majority Vote", "K-means", "Gaussian Mixture Model", "Bayesian Gaussian Mixture Model",
-                 "Random Forest", "Balanced Random Forest", "Support Vector Machine", "K-nearest Neighbors", "Easy Ensemble",
-                 "Self Trainer", "Label Propagation",
-                 "LSTM", "BLSTM", "Encoder Decoder"]
-    all_models = ["rf_bal"] # all_models = ["rf_bal", "lstm", "enc_dec", "self_trainer"]
-    all_names = ["Balanced Random Forest", "LSTM", "Encoder Decoder", "Self Trainer"] #all_names = ["Balanced Random Forest", "LSTM", "Encoder Decoder", "Self Trainer"]
     # save bogplot for true predictions and all true smps in the folder above
     if (plotting["bog_plot_trues"] is not None) or (plotting["only_trues"]):
         # get important vars
@@ -638,7 +640,7 @@ def evaluate_all_models(data, file_scores=None, file_scores_lables=None, overwri
 
     all_scores = []
     all_scores_per_label = []
-
+    
     for model_type, name in zip(all_models, all_names):
         print("Evaluating {} Model ...\n".format(name))
         model = get_single_model(model_type=model_type, data=data,
@@ -856,14 +858,14 @@ def main():
         data = preprocess_dataset(
             smp_file_name=args.smp_npz, 
             output_file=args.preprocess_file, 
-            visualize=True, 
+            visualize=False, 
             ignore_unlabelled=True) 
     else:
         with open(args.preprocess_file, "rb") as myFile:
             data = pickle.load(myFile)
 
     # EVALUATION
-    if args.evaluate: evaluate_all_models(data, overwrite_tables=False)
+    if args.evaluate: evaluate_all_models(data, models=args.models, overwrite_tables=False)
 
     # TRAINING AND STORING MODEL
     # models can be modified here (make a list of desired models, params
