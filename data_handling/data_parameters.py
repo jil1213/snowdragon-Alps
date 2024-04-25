@@ -9,8 +9,8 @@ EXP_LOC = parentdir + "/data/smp_profiles/"
 EVAL_LOC = parentdir + "/output/evaluation/"
 
 # Example profiles - one for plotting and the folder where they live
-EXAMPLE_SMP_NAME = "S36M0335"
-EXAMPLE_SMP_PATH = "..\data\smp_pnt_files"
+EXAMPLE_SMP_NAME = "S36M0337"
+EXAMPLE_SMP_PATH = "data/smp_pnt_files/"
 
 # filenames where data, normalized data and preprocessed data is stored
 SMP_ORIGINAL_NPZ = "data/all_smp_profiles.npz"

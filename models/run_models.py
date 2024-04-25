@@ -1,6 +1,6 @@
 # import from other snowdragon modules
 from data_handling.data_loader import load_data
-from data_handling.data_parameters import LABELS, ANTI_LABELS, COLORS
+from data_handling.data_parameters import LABELS, ANTI_LABELS, COLORS, EXAMPLE_SMP_NAME
 from models.cv_handler import cv_manual, mean_kfolds
 from models.supervised_models import svm, random_forest, ada_boost, knn
 from models.semisupervised_models import kmeans, gaussian_mix, bayesian_gaussian_mix, label_spreading, self_training
@@ -541,11 +541,13 @@ def train_and_store_models(data, models=["all"], **kwargs):
             fitted_model.save("models/stored_models/" + model_type + ".keras")
 
 
-def evaluate_all_models(data, models=["all"], file_scores=None, file_scores_lables=None, overwrite_tables=True, **params):
+def evaluate_all_models(data, models=["all"], model_names=None, file_scores=None, file_scores_lables=None, overwrite_tables=True, **params):
     """ Evaluating each model. Parameters for models are given in params.
     Results can be saved intermediately in a file.
     Parameters:
         data (dict): dictionary produced by preprocess_dataset containing all necessary information
+        models(list): list of models that should be evaluated. Default is ["all"]
+        model_names (list): list of names for the models. If None the names are equivalent to models
         file_scores (path): where to save results intermediately
         file_scores_labels (path): where to save the labels of the results intermediately
         overwrite_tables (bool): If false the tables are not produced newly
@@ -562,7 +564,10 @@ def evaluate_all_models(data, models=["all"], file_scores=None, file_scores_labl
                      "LSTM", "BLSTM", "Encoder Decoder"]
     else:
         all_models = models
-        all_names = models
+    
+    if model_names is None:
+        all_names = all_models
+        
         
     # set plotting variables:
     # no special labels order (default ascending) and name must be set individually
@@ -570,10 +575,7 @@ def evaluate_all_models(data, models=["all"], file_scores=None, file_scores_labl
     smoothing = 0 # window for smoothing (later: one could also set different smoothing parameters for the different models!)
     plotting = {"annot": "eval", "roc_curve": True, "confusion_matrix": True,
                 "one_plot": True, "pair_plots": True, "only_preds": True, "only_trues": False,
-                "plot_list": None, "bog_plot_preds": "output/evaluation/", "bog_plot_trues": "output/evaluation/"}
-    plotting = {"annot": "eval", "roc_curve": False, "confusion_matrix": False,
-                "one_plot": True, "pair_plots": False, "only_preds": False, "only_trues": False,
-                "plot_list": None, "bog_plot_preds": None, "bog_plot_trues": None}
+                "plot_list": None, "bog_plot_preds": "output/evaluation/", "bog_plot_trues": None}
 
     folders = {"rf": "output/evaluation/rf",
                "rf_bal": "output/evaluation/rf_bal",
@@ -635,12 +637,12 @@ def evaluate_all_models(data, models=["all"], file_scores=None, file_scores_labl
             print("Plotting the Bogplot of all observed SMP Profiles:")
             save_file = plotting["bog_plot_trues"] + "/bogplot_trues.png"
             all_in_one_plot(all_smp_trues, show_indices=False, sort=True,
-                            title="All Observed SMP Profiles of the Testing Data", file_name=save_file)
+                            title="All Observed SMP Profiles of the Testing Data", file_name=save_file, profile_name=EXAMPLE_SMP_NAME)
             plotting["bog_plot_trues"] = None
 
     all_scores = []
     all_scores_per_label = []
-    
+
     for model_type, name in zip(all_models, all_names):
         print("Evaluating {} Model ...\n".format(name))
         model = get_single_model(model_type=model_type, data=data,

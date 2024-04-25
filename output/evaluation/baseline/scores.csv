@@ -1,8 +1,8 @@
 ,Metrics,Values,Model
-0,eval_balanced_accuracy,0.1111111111111111,Majority Vote
-1,eval_absolute_accuracy,0.3469824293353705,Majority Vote
-2,eval_recall,0.3469824293353705,Majority Vote
-3,eval_precision,0.12039680626747538,Majority Vote
-4,eval_f1,0.1787652216471476,Majority Vote
-5,eval_fit_time,0.0,Majority Vote
-6,eval_score_time,0.0,Majority Vote
+0,eval_balanced_accuracy,0.1111111111111111,baseline
+1,eval_absolute_accuracy,0.3469824293353705,baseline
+2,eval_recall,0.3469824293353705,baseline
+3,eval_precision,0.12039680626747538,baseline
+4,eval_f1,0.1787652216471476,baseline
+5,eval_fit_time,0.0,baseline
+6,eval_score_time,0.0,baseline

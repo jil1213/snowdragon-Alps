@@ -551,7 +551,7 @@ def smp_unlabelled(smp, smp_name, file_name="output/plots_data/smp_unlabelled.pn
     else:
         smp_wanted = smp_name
     smp_profile = smp[smp["smp_idx"] == smp_wanted]
-    ax = sns.lineplot(data=smp_profile, x="distance",y ="mean_force") #ax = sns.lineplot(data=(smp_profile["distance"], smp_profile["mean_force"]))
+    ax = sns.lineplot(data=smp_profile, x="distance", y ="mean_force") #ax = sns.lineplot(data=(smp_profile["distance"], smp_profile["mean_force"]))
     plt.title("Unlabelled SMP Profile {}".format(smp_name))
     ax.set_xlabel("Snow Depth [mm]")
     ax.set_ylabel("Mean Force [N]")
@@ -577,9 +577,8 @@ def smp_labelled(smp, smp_name, title=None, file_name="output/plots_data/smp_lab
     """
     # SHOW THE SAME PROFILE WITH LABELS
     if isinstance(smp_name, str):
-        smp_wanted = idx_to_int(smp_name)
-    else:
-        smp_wanted = idx_to_int(smp_name)   # convert string to int
+        smp_wanted = idx_to_int(smp_name) # convert string to int
+    else: 
         smp_wanted = smp_name
 
     smp_profile = smp[smp["smp_idx"] == smp_wanted]
@@ -721,7 +720,7 @@ def smp_pair_both(smp_true, smp_pred, smp_name, title=None, file_name="output/pl
     fig, axs = plt.subplots(2, sharex=True, sharey=True)
 
     for ax, smp in zip(axs, smps):
-        ax = sns.lineplot(data=smp_profile, x="distance", y="mean_force", ax=ax)
+        ax = sns.lineplot(data=smp, x="distance", y="mean_force", ax=ax)
         last_label_num = 1
         last_distance = -1
         # going through labels and distance

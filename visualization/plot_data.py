@@ -3,6 +3,7 @@ from data_handling.data_preprocessing import idx_to_int
 from models.helper_funcs import int_to_idx
 from visualization.plot_profile import smp_unlabelled
 from data_handling.data_parameters import LABELS, ANTI_LABELS, COLORS, ANTI_LABELS_LONG
+from data_handling.data_parameters import EXAMPLE_SMP_PATH
 
 import os
 import io
@@ -155,12 +156,12 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
     ax = plt.gca()
     fig = plt.gcf()
     ax_in_plot = ax.inset_axes([0.15,0.5,0.4,0.4])
-    if profile_name == "S36M0335": 
+    if profile_name:
          # retrieve original smp signal
          # load npz in smp_profiles_updated
-         raw_file = Profile.load("./data/smp_pnt_files/" + profile_name + ".pnt")
+         raw_file = Profile.load(EXAMPLE_SMP_PATH + profile_name + ".pnt")
          raw_profile = raw_file.samples_within_snowpack(relativize=True)
-         sns.lineplot(data=(raw_profile["distance"], raw_profile["force"]), ax=ax_in_plot, color="darkgrey")
+         sns.lineplot(data=raw_profile, x="distance", y="force", ax=ax_in_plot, color="darkgrey")
 
     if isinstance(profile_name, str):
         smp_wanted = idx_to_int(profile_name)
@@ -169,12 +170,13 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
 
     smp_profile = smp[smp["smp_idx"] == smp_wanted]
 
-    sns.lineplot(data=(smp_profile["distance"], smp_profile["mean_force"]), ax=ax_in_plot)# , color="darkslategrey"
-    ax_in_plot.set_xlabel("Distance from Surface [mm]")
-    ax_in_plot.set_ylabel("Mean Force [N]")
-    ax_in_plot.set_xlim(0, len(smp_profile)-1)
-    ax_in_plot.set_ylim(0, 10)
-    ax_in_plot.set_title("Snow Micro Pen Signal") #of\nProfile {}".format(profile_name)
+    if profile_name:
+        sns.lineplot(data=smp_profile, x="distance", y="mean_force", ax=ax_in_plot)# , color="darkslategrey"
+        ax_in_plot.set_xlabel("Distance from Surface [mm]")
+        ax_in_plot.set_ylabel("Mean Force [N]")
+        ax_in_plot.set_xlim(0, len(smp_profile)-1)
+        ax_in_plot.set_ylim(0, 10)
+        ax_in_plot.set_title("Snow Micro Pen Signal") #of\nProfile {}".format(profile_name)
 
     # add background colors!
     last_label_num = 1
@@ -189,11 +191,11 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
         if distance == smp_profile.iloc[len(smp_profile)-1]["distance"]:
             ax_in_plot.axvspan(last_distance, distance, color=COLORS[label_num], alpha=0.5)
 
-
-    # find location of smp profile
-    profile_loc = (labels.index(profile_name) / len(labels)) + (bar_width*1.5)
-    # draw arrow between plot and smp profile
-    ax.annotate("", xy=(profile_loc, 80), xytext=(0.55, 400), arrowprops=dict(shrink=0.05)) # facecolor="black",
+    #if profile_name: 
+        # find location of smp profile
+        #profile_loc = (labels.index(profile_name) / len(labels)) + (bar_width*1.5)
+        # draw arrow between plot and smp profile
+        #ax.annotate("", xy=(profile_loc, 80), xytext=(0.55, 400), arrowprops=dict(shrink=0.05)) # facecolor="black",
     fig.set_size_inches(10, 5) # set size of figure
     #plt.savefig(file_name, bbox_inches="tight", dpi=300)
     #ax.set_aspect(aspect=0.5)

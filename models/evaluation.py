@@ -1,6 +1,6 @@
 from models.metrics import METRICS, METRICS_PROB
 from models.helper_funcs import reverse_normalize, int_to_idx, save_results
-from data_handling.data_parameters import ANTI_LABELS
+from data_handling.data_parameters import ANTI_LABELS, EXAMPLE_SMP_NAME
 from models.semisupervised_models import assign_clusters
 from models.anns import fit_ann_model, predict_ann_model
 from models.baseline import fit_baseline, predict_baseline
@@ -334,14 +334,14 @@ def plot_testing(y_pred, y_pred_prob, metrics_per_label, x_test, y_test,
         all_smp_trues = pd.concat(smp_trues)
         save_file = save_dir + "/bogplot_trues.png" if save_dir is not None else None
         all_in_one_plot(all_smp_trues, show_indices=False, sort=True,
-                        title="All Observed SMP Profiles of the Testing Data", file_name=save_file)
+                        title="All Observed SMP Profiles of the Testing Data", file_name=save_file, profile_name=EXAMPLE_SMP_NAME)
 
     if bog_plot_preds is not None:
         print("\tPlotting predicted bogplots:")
         all_smp_preds = pd.concat(smp_preds)
         save_file = save_dir + "/bogplot_preds.png" if save_dir is not None else None
         all_in_one_plot(all_smp_preds, show_indices=False, sort=True,
-                        title="All SMP Profiles Predicted with {}".format(name), file_name=save_file)
+                        title="All SMP Profiles Predicted with {}".format(name), file_name=save_file, profile_name=EXAMPLE_SMP_NAME)
 
 # TODO during testing: write out results for all models into csv to make united
 # results plots possible (delete single plots later)
