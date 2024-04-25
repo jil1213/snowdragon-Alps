@@ -92,6 +92,8 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
             within the figure. If there is a string indicating a profile this one
             is plotted within the overview plot (with arrow).
     """
+    print("Hüpfen in All in One Plot")
+    print(profile_name)
     #plt.rcParams.update({"figure.dpi": 400})
     # be aware that predictions from other models must be consistent with the labels we know
     labelled_smp = smp[(smp["label"] != 0) & (smp["label"] != 2)]
@@ -153,15 +155,17 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
     plt.ylim(0, int(math.ceil(max_distance / 100.0)) * 100) # rounds up to next hundred
 
     # add plot within plot
-    ax = plt.gca()
-    fig = plt.gcf()
-    ax_in_plot = ax.inset_axes([0.15,0.5,0.4,0.4])
     if profile_name:
+        print("Hüpfen in Miniplot")
+        print(profile_name)
+        ax = plt.gca()
+        fig = plt.gcf()
+        ax_in_plot = ax.inset_axes([0.15,0.5,0.4,0.4])
          # retrieve original smp signal
          # load npz in smp_profiles_updated
-         raw_file = Profile.load(EXAMPLE_SMP_PATH + profile_name + ".pnt")
-         raw_profile = raw_file.samples_within_snowpack(relativize=True)
-         sns.lineplot(data=raw_profile, x="distance", y="force", ax=ax_in_plot, color="darkgrey")
+        raw_file = Profile.load(EXAMPLE_SMP_PATH + profile_name + ".pnt")
+        raw_profile = raw_file.samples_within_snowpack(relativize=True)
+        sns.lineplot(data=raw_profile, x="distance", y="force", ax=ax_in_plot, color="darkgrey")
 
     if isinstance(profile_name, str):
         smp_wanted = idx_to_int(profile_name)
@@ -196,7 +200,7 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
         #profile_loc = (labels.index(profile_name) / len(labels)) + (bar_width*1.5)
         # draw arrow between plot and smp profile
         #ax.annotate("", xy=(profile_loc, 80), xytext=(0.55, 400), arrowprops=dict(shrink=0.05)) # facecolor="black",
-    fig.set_size_inches(10, 5) # set size of figure
+    #fig.set_size_inches(10, 5) # set size of figure
     #plt.savefig(file_name, bbox_inches="tight", dpi=300)
     #ax.set_aspect(aspect=0.5)
     plt.savefig(file_name, bbox_inches="tight", dpi=200)

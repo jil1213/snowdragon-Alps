@@ -637,7 +637,7 @@ def evaluate_all_models(data, models=["all"], model_names=None, file_scores=None
             print("Plotting the Bogplot of all observed SMP Profiles:")
             save_file = plotting["bog_plot_trues"] + "/bogplot_trues.png"
             all_in_one_plot(all_smp_trues, show_indices=False, sort=True,
-                            title="All Observed SMP Profiles of the Testing Data", file_name=save_file, profile_name=EXAMPLE_SMP_NAME)
+                            title="All Observed SMP Profiles of the Testing Data", file_name=save_file, profile_name=None)
             plotting["bog_plot_trues"] = None
 
     all_scores = []
