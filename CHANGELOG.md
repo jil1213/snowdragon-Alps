@@ -26,8 +26,8 @@ EVAL_LOC = parentdir + "/output/evaluation/"
 
 ```
 # Example profiles - one for plotting and the folder where they live
-EXAMPLE_SMP_NAME = "S36M0335"
-EXAMPLE_SMP_PATH = "..\data\smp_pnt_files"
+EXAMPLE_SMP_NAME = "S36M0337"
+EXAMPLE_SMP_PATH = "data/smp_pnt_files/"
 
 # filenames where data, normalized data and preprocessed data is stored
 SMP_ORIGINAL_NPZ = "data/all_smp_profiles.npz"
@@ -107,7 +107,7 @@ First you have to preprocess your data for training
 
 ### Run_models.py
 
--   import Paths were data is stored: `from data_handling.data_parameters import SMP_ORIGINAL_NPZ, SMP_NORMALIZED_NPZ, SMP_PREPROCESSED_TXT`
+-   import Paths were data is stored: `from data_handling.data_parameters import SMP_ORIGINAL_NPZ, SMP_NORMALIZED_NPZ, SMP_PREPROCESSED_TXT, EXAMPLE_SMP_NAME`
     Add the right file arguments in the praser:
     ```
             # File arguments
@@ -171,13 +171,16 @@ First you have to preprocess your data for training
      fitted_model.save("models/stored_models/" + model_type + ".keras")
     ```
 -   in def `evaluate_all models()` change so that one single model can be evaluated:
-    Add the input parameter models
+    Add the input parameter models and model_names
+
     ```
-    def evaluate_all_models(data, models=["all"], file_scores=None, file_scores_lables=None, overwrite_tables=True, **params):
+    def evaluate_all_models(data, models=["all"], model_names=None, file_scores=None, file_scores_lables=None, overwrite_tables=True, **params):
     ```
+
     Add the following if statement:
+
     ```
-        if models == ["all"]:
+    if models == ["all"]:
         all_models = ["baseline", "kmeans", "gmm", "bmm",
                       "rf", "rf_bal", "svm", "knn", "easy_ensemble",
                       "self_trainer", "label_spreading",
@@ -188,10 +191,21 @@ First you have to preprocess your data for training
                      "LSTM", "BLSTM", "Encoder Decoder"]
     else:
         all_models = models
-        all_names = models
+
+    if model_names is None:
+        all_names = all_models
     ```
+
     And delete line 588-598 where all_models and all names were defined
-    -   Add in def `main()` the input arguement model for the vealuation handler
+
+    -   Add the input parameter profile_name by calling `all_in_one_plot()` Line 639
+
+        ```
+        all_in_one_plot(all_smp_trues, show_indices=False, sort=True,
+                            title="All Observed SMP Profiles of the Testing Data", file_name=save_file, profile_name=EXAMPLE_SMP_NAME)
+        ```
+
+    -   Add in def `main()` the input arguement model for the evaluation handler
         ```
             # EVALUATION
             if args.evaluate: evaluate_all_models(data, models=args.models, overwrite_tables=False)
@@ -205,21 +219,53 @@ change line 262 in def `cv_manual()`
 k_idx = np.resize(np.arange(1, k+1), len(profiles))
 ```
 
+### evaluation.py
+
+import EXAMPLE-SMP-NAME
+
+```
+from data_handling.data_parameters import ANTI_LABELS, EXAMPLE_SMP_NAME
+```
+
+in def `plot_testing()` by calling `all_in_one_plot()` add name to the input parameters:
+Line336 and Line 344
+
+```
+ all_in_one_plot(all_smp_trues, show_indices=False, sort=True,
+                        title="All Observed SMP Profiles of the Testing Data", file_name=save_file, profile_name=EXAMPLE_SMP_NAME)
+```
+
 ## Visualization
 
 ### plot_data.py
 
+-   Import `EXAMPLE-SMP_PATH`
+
 -   update the def `all_in_one_plot()` with a profile of your SMP data, change the section in Line 154 add plot in plot your profile name into the if statement
 
 ```
-if profile_name == "S36M0335":
+if profile_name:
 ```
 
-the path to the `raw_file` should be also updated. When data is stored in `data/` you can use a simmilar path to:
+the path to the `raw_file` should be also updated. When data is stored in `data/` you can use a simmilar path to `EXAMPLE_SMP_PATH`:
 
 ```
-raw_file = Profile.load("./data/smp_pnt_files/" + profile_name + ".pnt")
+raw_file = Profile.load(EXAMPLE_SMP_PATH + profile_name + ".pnt")
 ```
+
+change sns.lineplot syntax in Line 164
+
+```
+sns.lineplot(data=raw_profile, x="distance", y="force", ax=ax_in_plot, color="darkgrey")
+```
+
+-   do the same if statement for plotting in Line 173 and change also the seadorn sns.linelot syntax
+
+    ```
+     if profile_name:
+        sns.lineplot(data=smp_profile, x="distance", y="mean_force", ax=ax_in_plot)# , color="darkslategrey"
+        ax_in_plot.set_xlabel("Distance from Surface [mm]")
+    ```
 
 -   the seaborn plot has been udated, so a new syntax for lineplot is needed. Update the following statements
 
