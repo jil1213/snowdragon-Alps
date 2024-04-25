@@ -92,8 +92,6 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
             within the figure. If there is a string indicating a profile this one
             is plotted within the overview plot (with arrow).
     """
-    print("Hüpfen in All in One Plot")
-    print(profile_name)
     #plt.rcParams.update({"figure.dpi": 400})
     # be aware that predictions from other models must be consistent with the labels we know
     labelled_smp = smp[(smp["label"] != 0) & (smp["label"] != 2)]
@@ -156,8 +154,6 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
 
     # add plot within plot
     if profile_name:
-        print("Hüpfen in Miniplot")
-        print(profile_name)
         ax = plt.gca()
         fig = plt.gcf()
         ax_in_plot = ax.inset_axes([0.15,0.5,0.4,0.4])
@@ -166,6 +162,7 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
         raw_file = Profile.load(EXAMPLE_SMP_PATH + profile_name + ".pnt")
         raw_profile = raw_file.samples_within_snowpack(relativize=True)
         sns.lineplot(data=raw_profile, x="distance", y="force", ax=ax_in_plot, color="darkgrey")
+        ax_in_plot.set_xlim(left=0, right=raw_profile["distance"].max())
 
     if isinstance(profile_name, str):
         smp_wanted = idx_to_int(profile_name)
@@ -178,7 +175,7 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
         sns.lineplot(data=smp_profile, x="distance", y="mean_force", ax=ax_in_plot)# , color="darkslategrey"
         ax_in_plot.set_xlabel("Distance from Surface [mm]")
         ax_in_plot.set_ylabel("Mean Force [N]")
-        ax_in_plot.set_xlim(0, len(smp_profile)-1)
+        ax_in_plot.set_xlim(left=0, right=smp_profile["distance"].max())
         ax_in_plot.set_ylim(0, 10)
         ax_in_plot.set_title("Snow Micro Pen Signal") #of\nProfile {}".format(profile_name)
 

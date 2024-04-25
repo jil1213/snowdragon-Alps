@@ -259,12 +259,19 @@ change sns.lineplot syntax in Line 164
 sns.lineplot(data=raw_profile, x="distance", y="force", ax=ax_in_plot, color="darkgrey")
 ```
 
--   do the same if statement for plotting in Line 173 and change also the seadorn sns.linelot syntax
+-   do the same if statement for adding a smaller plot in Line 159 and change also the seadorn sns.lineplot syntax
 
     ```
-     if profile_name:
-        sns.lineplot(data=smp_profile, x="distance", y="mean_force", ax=ax_in_plot)# , color="darkslategrey"
-        ax_in_plot.set_xlabel("Distance from Surface [mm]")
+     # add plot within plot
+    if profile_name:
+        ax = plt.gca()
+        fig = plt.gcf()
+        ax_in_plot = ax.inset_axes([0.15,0.5,0.4,0.4])
+         # retrieve original smp signal
+         # load npz in smp_profiles_updated
+        raw_file = Profile.load(EXAMPLE_SMP_PATH + profile_name + ".pnt")
+        raw_profile = raw_file.samples_within_snowpack(relativize=True)
+        sns.lineplot(data=raw_profile, x="distance", y="force", ax=ax_in_plot, color="darkgrey")
     ```
 
 -   the seaborn plot has been udated, so a new syntax for lineplot is needed. Update the following statements

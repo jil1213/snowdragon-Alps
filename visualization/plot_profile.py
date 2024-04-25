@@ -349,6 +349,7 @@ def compare_model_and_profiles(smp_trues, smp_preds, smp_names, model_names, tit
                 # plot the ground truth measurement
                 #["Force Signal", "Wrong Classification"]
                 signalplot = sns.lineplot(data= smp_true, x="distance", y="mean_force", ax=axs[model_i, smp_i])
+                signalplot.set_xlim(left=0, right=smp_true["distance"].max())
                 signalplot.set(ylim=height, title=title_names[smp_i])
                 signalplot.set_title(title_names[smp_i], fontsize=10)
                 line_handles.append(signalplot)
@@ -500,7 +501,7 @@ def compare_plot(smp_true, smp_preds, smp_name, model_names, title=None, grid=Tr
 
             if distance == smp.iloc[len(smp)-1]["distance"]:
                 ax.axvspan(last_distance, distance, color=COLORS[label_num], alpha=alpha)
-        ax.set_xlim(0, len(smp)-1)
+        ax.set_xlim(left=0, right=smp["distance"].max()) 
         ax.set_ylim(0)
         ax.set(ylabel=None)
 
@@ -556,7 +557,7 @@ def smp_unlabelled(smp, smp_name, file_name="output/plots_data/smp_unlabelled.pn
     ax.set_xlabel("Snow Depth [mm]")
     ax.set_ylabel("Mean Force [N]")
     ax.set_ylim(0)
-    ax.set_xlim(0, len(smp_profile)-1)
+    ax.set_xlim(left=0, right=smp_profile["distance"].max()) 
     if file_name is None:
         plt.show()
     else:
@@ -606,7 +607,7 @@ def smp_labelled(smp, smp_name, title=None, file_name="output/plots_data/smp_lab
     plt.legend(markers, anti_colors.keys(), numpoints=1, loc="lower right")
     ax.set_xlabel("Snow Depth [mm]")
     ax.set_ylabel("Mean Force [N]")
-    ax.set_xlim(0, len(smp_profile)-1)
+    ax.set_xlim(left=0, right=smp_profile["distance"].max()) 
     ax.set_ylim(0)
     plt.tight_layout()
     if file_name is None:
@@ -661,7 +662,7 @@ def smp_pair(smp_true, smp_pred, smp_name, title=None, grid=True, file_name="out
             last_distance = distance-1
         if distance == smp_pred.iloc[len(smp_pred)-1]["distance"]:
             axs[1].axvspan(last_distance, distance, color=COLORS[label_num], alpha=0.5)
-    axs[1].set_xlim(0, len(smp_pred)-1)
+    axs[1].set_xlim(left=0, right=smp_pred["distance"].max())  
     axs[1].set_ylim(0)
     plt.text(0.01, 0.95, "Prediction", fontweight="bold", fontsize=8.5, transform=axs[1].transAxes)
 
@@ -733,7 +734,7 @@ def smp_pair_both(smp_true, smp_pred, smp_name, title=None, file_name="output/pl
 
             if distance == smp.iloc[len(smp)-1]["distance"]:
                 ax.axvspan(last_distance, distance, color=COLORS[label_num], alpha=0.5)
-        ax.set_xlim(0, len(smp)-1)
+        ax.set_xlim(left=0, right=smp["distance"].max()) 
         ax.set_ylim(0)
         ax.set(ylabel=None)
 
