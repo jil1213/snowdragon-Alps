@@ -272,6 +272,7 @@ sns.lineplot(data=raw_profile, x="distance", y="force", ax=ax_in_plot, color="da
         raw_file = Profile.load(EXAMPLE_SMP_PATH + profile_name + ".pnt")
         raw_profile = raw_file.samples_within_snowpack(relativize=True)
         sns.lineplot(data=raw_profile, x="distance", y="force", ax=ax_in_plot, color="darkgrey")
+        ax_in_plot.set_xlim(left=0, right=raw_profile["distance"].max())
     ```
 
 -   the seaborn plot has been udated, so a new syntax for lineplot is needed. Update the following statements
@@ -286,6 +287,13 @@ change into
 sns.lineplot(data=(smp_profile["distance"], smp_profile["mean_force"]), ax=ax_in_plot)# , color="darkslategrey"
 ```
 
+-   also update the xlim statements for the plots appearance
+    e.g in Line 178
+
+    ```
+    ax_in_plot.set_xlim(left=0, right=smp_profile["distance"].max())
+    ```
+
 -   update your labels you want to visualize in def `visualize_tree()` in line 474.
 
 ```
@@ -295,7 +303,7 @@ sns.lineplot(data=(smp_profile["distance"], smp_profile["mean_force"]), ax=ax_in
 You can also comment the direct decision which label gets which decision tree label and the defintion of class names (line 467)
 
 ```
- # deciding directly which label gets which decision tree label
+    # deciding directly which label gets which decision tree label
         #y_train[y_train==6.0] = 0
         #y_train[y_train==3.0] = 1
         #y_train[y_train==5.0] = 2
@@ -331,24 +339,43 @@ into:
 
     ```
      signalplot = sns.lineplot(data= smp_true, x="distance", y="mean_force", ax=axs[model_i, smp_i])
+     signalplot.set_xlim(left=0, right=smp_true["distance"].max())
     ```
 
     Line468 in `def compare_plot()`
 
     ```
-    signalplot = sns.lineplot(data=smp, x="distance", y="mean_force", ax=ax)
+     signalplot = sns.lineplot(data=smp, x="distance", y="mean_force", ax=ax)
     ```
 
-    Line653 in `def smp_pair()`
+    For XLIM: also Line 504 in `def compare_plot()`
 
     ```
-    axs[1] = sns.lineplot(data= smp_pred, x= "distance", y= "mean_force")
+     ax.set_xlim(left=0, right=smp["distance"].max())
+    ```
+
+    Line 653 in `def smp_pair()`
+
+    ```
+     axs[1] = sns.lineplot(data= smp_pred, x= "distance", y= "mean_force")
+    ```
+
+    For XLIM: also Line 665 in `def smp_pair()`
+
+    ```
+     axs[1].set_xlim(left=0, right=smp_pred["distance"].max())
     ```
 
     Line722 in `def smp_pair_both()`
 
     ```
     ax = sns.lineplot(data=smp_profile, x="distance", y="mean_force", ax=ax)
+    ```
+
+    For XLIM: also Line 737 in `def smp_pair_both()`
+
+    ```
+     ax.set_xlim(left=0, right=smp["distance"].max())
     ```
 
 -   update in def `smp_unlabelled()` in line 554 an in def `smp_labelled()` in line 585 the lineplot statement:
@@ -361,6 +388,7 @@ into:
 
     ```
      ax = sns.lineplot(data=smp_profile, x="distance",y ="mean_force")
+     ax.set_xlim(left=0, right=smp_profile["distance"].max())
     ```
 
 -   update your labels for your legend in def `ini_bogplots()` in Line 102

@@ -1,8 +1,8 @@
 ,Metrics,Values,Model
-0,eval_balanced_accuracy,0.42627619603968314,K-means
-1,eval_absolute_accuracy,0.5675324675324676,K-means
-2,eval_recall,0.5675324675324676,K-means
-3,eval_precision,0.5213798927995088,K-means
-4,eval_f1,0.5337218627012281,K-means
-5,eval_fit_time,6.613011598587036,K-means
-6,eval_score_time,0.009998083114624023,K-means
+0,eval_balanced_accuracy,0.42627619603968314,kmeans
+1,eval_absolute_accuracy,0.5675324675324676,kmeans
+2,eval_recall,0.5675324675324676,kmeans
+3,eval_precision,0.5213798927995088,kmeans
+4,eval_f1,0.5337218627012281,kmeans
+5,eval_fit_time,6.594717502593994,kmeans
+6,eval_score_time,0.009998798370361328,kmeans
