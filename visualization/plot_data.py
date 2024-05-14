@@ -109,7 +109,7 @@ def all_in_one_plot(smp, show_indices=False, sort=True, title="SMP Profiles with
         smp_indices = [smp_indices[ix] for ix in sort_indices]
         smp_idx_labels = [smp_idx_labels[ix] for ix in sort_indices]
 
-    # maximal found distance for all profilesC
+    # maximal found distance for all profiles
     max_distance = len(max(smp_idx_labels, key = lambda x: len(x)))
     # numpy array with 0 where no label exists anymore
     smp_idx_labels_filled = np.zeros([len(smp_idx_labels), max_distance])
