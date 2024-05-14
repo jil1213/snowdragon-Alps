@@ -205,10 +205,58 @@ First you have to preprocess your data for training
                             title="All Observed SMP Profiles of the Testing Data", file_name=save_file, profile_name=EXAMPLE_SMP_NAME)
         ```
 
-    -   Add in def `main()` the input arguement model for the evaluation handler
+-   in def `validate_all models()` change so that one single model can be validated:
+    Add the input parameter models and model_names
+
+    ```
+    def validate_all_models(data, intermediate_file=None, models=["all"], model_names=None):
+    ```
+
+    -   Add in def `main()` the input arguement model for the evaluation handler and the validation handler
+
         ```
             # EVALUATION
             if args.evaluate: evaluate_all_models(data, models=args.models, overwrite_tables=False)
+        ```
+
+        ```
+            # VALIDATION
+            if args.validate:
+            intermediate_results = "data/validation_results.txt"
+            validate_all_models(data, intermediate_results, models=args.models)
+        ```
+
+        Add the following if statement:
+
+        ```
+        if models == ["all"]:
+            all_models = ["baseline", "kmeans", "gmm", "bmm",
+                        "rf", "rf_bal", "svm", "knn", "easy_ensemble",
+                        "self_trainer", "label_spreading",
+                        "lstm", "blstm", "enc_dec"]
+            all_names = ["Majority Vote", "K-means", "Gaussian Mixture Model", "Bayesian Gaussian Mixture Model",
+                        "Random Forest", "Balanced Random Forest", "Support Vector Machine", "K-nearest Neighbors", "Easy Ensemble",
+                        "Self Trainer", "Label Propagation",
+                        "LSTM", "BLSTM", "Encoder Decoder"]
+        else:
+            all_models = models
+
+        if model_names is None:
+            all_names = all_models
+        ```
+
+        and put the single validation of models into the following statement:
+
+        ```
+        for model_type, name in zip(all_models, all_names):
+            print("Starting {} Model ...\n".format(name))
+            # Baseline - majority class predicition
+            if model_type == "baseline":
+            ...
+            elif model_type == "kmeans":
+            ...
+            if intermediate_file is not None: save_results(intermediate_file, all_scores)
+            print("...finished {} Model.\n".format(name))
         ```
 
 ### cv_handler.py
