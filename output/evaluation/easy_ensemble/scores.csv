@@ -4,7 +4,7 @@
 2,eval_recall,0.5533995416348357,easy_ensemble
 3,eval_precision,0.5638551368853223,easy_ensemble
 4,eval_f1,0.5466969309267884,easy_ensemble
-5,eval_fit_time,87.95505976676941,easy_ensemble
-6,eval_score_time,43.577285051345825,easy_ensemble
+5,eval_fit_time,87.6123297214508,easy_ensemble
+6,eval_score_time,43.791056394577026,easy_ensemble
 7,eval_roc_auc,0.8258909054272409,easy_ensemble
 8,eval_log_loss,2.1852003378227933,easy_ensemble

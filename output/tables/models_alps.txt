@@ -1,0 +1,9 @@
+\begin{tabular}{rlrrrrrrrrrrrrrrrr}
+\hline
+    & model                 &   train_bal_acc &   train_absolute_accuracy &   train_rec &   train_prec &   train_f1 &   test_bal_acc &   test_absolute_accuracy &   test_rec &   test_prec &   test_f1 &   fit_time &   score_time &   train_roc &    train_ll &   test_roc &    test_ll \\
+\hline
+  0 & MajorityClassBaseline &        0.111111 &                  0.373924 &    0.373924 &     0.139819 &   0.203532 &       0.111111 &                 0.373924 &   0.373924 &    0.139819 &  0.203532 & 0.00314078 &   0.00138621 &  nan        & nan         & nan        & nan        \\
+  1 & RandomForest          &        0.962724 &                  0.991087 &    0.991087 &     0.991092 &   0.991068 &       0.823665 &                 0.938348 &   0.938348 &    0.93827  &  0.937918 & 2.61834    &   0.0120086  &    0.999904 &   0.0986629 &   0.995648 &   0.259227 \\
+  2 & RandomForest          &        0.962724 &                  0.991087 &    0.991087 &     0.991092 &   0.991068 &       0.823665 &                 0.938348 &   0.938348 &    0.93827  &  0.937918 & 2.60982    &   0.015535   &    0.999904 &   0.0986629 &   0.995648 &   0.259227 \\
+\hline
+\end{tabular}

@@ -722,12 +722,36 @@ def evaluate_all_models(data, models=["all"], model_names=None, file_scores=None
 
 # TODO make a validation_all_models and evaluate_all_models function
 # think about using run_single_model and creating a eval_single_model for this
-def validate_all_models(data, intermediate_file=None):
+def validate_all_models(data, intermediate_file=None, models=["all"], model_names=None):
     """ All models are run here - the parameters are set manually within the function.
     Parameters:
         data (dict): dictionary produced by preprocess_dataset containing all necessary information
         intermediate_file (str): file_name for saving intermediate results
+        models(list): list of models that should be evaluated. Default is ["all"]
+        model_names (list): list of names for the models. If None the names are equivalent to models
     """
+    """
+    if models == ["all"]:
+        all_models = ["baseline", "kmeans", "gmm", "bmm",
+                      "rf", "rf_bal", "svm", "knn", "easy_ensemble",
+                      "self_trainer", "label_spreading",
+                      "lstm", "blstm", "enc_dec"]
+        all_names = ["Majority Vote", "K-means", "Gaussian Mixture Model", "Bayesian Gaussian Mixture Model",
+                     "Random Forest", "Balanced Random Forest", "Support Vector Machine", "K-nearest Neighbors", "Easy Ensemble",
+                     "Self Trainer", "Label Propagation",
+                     "LSTM", "BLSTM", "Encoder Decoder"]
+    """
+    if models == ["all"]:
+        all_models = ["baseline","rf", "rf_bal", 
+                      ]
+        all_names = ["Majority Vote", "Random Forest", "Balanced Random Forest", 
+                     ]
+    else:
+        all_models = models
+    
+    if model_names is None:
+        all_names = all_models
+
     # unpack all necessary values from the preprocessing dictionary
     x_train = data["x_train"]
     y_train = data["y_train"]
@@ -745,112 +769,83 @@ def validate_all_models(data, intermediate_file=None):
     # 9. Call the models
     all_scores = []
 
-    # A Baseline - majority class predicition
-    print("Starting Baseline Model...")
-    baseline_scores = majority_class_baseline(x_train, y_train, cv_stratified)
-    all_scores.append(mean_kfolds(baseline_scores))
-    print(mean_kfolds(baseline_scores))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished Baseline Model.\n")
+    for model_type, name in zip(all_models, all_names):
+        print("Starting {} Model ...\n".format(name))
+        # Baseline - majority class predicition
+        if model_type == "baseline":
+            baseline_scores = majority_class_baseline(x_train, y_train, cv_stratified)
+            all_scores.append(mean_kfolds(baseline_scores))
 
-    # B kmeans clustering (does not work well)
-    # BEST cluster selection criterion: no difference, you can use either acc or sil (use sil in this case!)
-    print("Starting K-Means Model...")
-    kmeans_scores = kmeans(unlabelled_smp_x, x_train, y_train, cv_stratified, num_clusters=10, find_num_clusters="acc", plot=False)
-    all_scores.append(mean_kfolds(kmeans_scores))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished K-Means Model.\n")
+        # kmeans clustering (does not work well)
+        # BEST cluster selection criterion: no difference, you can use either acc or sil (use sil in this case!)
+        elif model_type == "kmeans":
+            kmeans_scores = kmeans(unlabelled_smp_x, x_train, y_train, cv_stratified, num_clusters=10, find_num_clusters="acc", plot=False)
+            all_scores.append(mean_kfolds(kmeans_scores))
 
-    # C mixture model clustering ("diag" works best at the moment)
-    # BEST cluster selection criterion: bic is slightly better than acc (generalization)
-    print("Starting Gaussian Mixture Model...")
-    gm_acc_diag = gaussian_mix(unlabelled_smp_x, x_train, y_train, cv_stratified, cov_type="diag", find_num_components="acc", plot=False)
-    all_scores.append(mean_kfolds(gm_acc_diag))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished Gaussian Mixture Model.\n")
+        # mixture model clustering ("diag" works best at the moment)
+            # BEST cluster selection criterion: bic is slightly better than acc (generalization)
+        elif model_type == "gmm":
+            print("Starting Gaussian Mixture Model...")
+            gm_acc_diag = gaussian_mix(unlabelled_smp_x, x_train, y_train, cv_stratified, cov_type="diag", find_num_components="acc", plot=False)
+            all_scores.append(mean_kfolds(gm_acc_diag))
 
-    print("Starting Baysian Gaussian Mixture Model...")
-    bgm_acc_diag = bayesian_gaussian_mix(unlabelled_smp_x, x_train, y_train, cv_stratified, cov_type="diag")
-    all_scores.append(mean_kfolds(bgm_acc_diag))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished Bayesian Gaussian Mixture Model.\n")
+        elif model_type == "bmm":
+            bgm_acc_diag = bayesian_gaussian_mix(unlabelled_smp_x, x_train, y_train, cv_stratified, cov_type="diag")
+            all_scores.append(mean_kfolds(bgm_acc_diag))
 
-    # TAKES A LOT OF TIME FOR COMPLETE DATA SET
-    # D + E -> different data preparation necessary
+        # TAKES A LOT OF TIME FOR COMPLETE DATA SET
+        # label_spreading and self training model -> different data preparation necessary
 
-    # D label spreading model
-    print("Starting Label Spreading Model...")
-    ls_scores = label_spreading(x_train=x_train_all, y_train=y_train_all, cv_semisupervised=cv_semisupervised, name="LabelSpreading_1000")
-    all_scores.append(mean_kfolds(ls_scores))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished Label Spreading Model.\n")
+        elif model_type == "label_spreading":
+            ls_scores = label_spreading(x_train=x_train_all, y_train=y_train_all, cv_semisupervised=cv_semisupervised, name="LabelSpreading_1000")
+            all_scores.append(mean_kfolds(ls_scores))
 
-    # E self training model
-    print("Starting Self Training Classifier...")
-    knn = KNeighborsClassifier(n_neighbors = 20, weights = "distance") # TODO replace with balanced random forest
-    st_scores = self_training(x_train=x_train_all, y_train=y_train_all, cv_semisupervised=cv_semisupervised, base_model=knn, name="SelfTraining_1000")
-    all_scores.append(mean_kfolds(st_scores))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished Self Training Classifier.\n")
+        elif model_type == "self_trainer":
+            knn = KNeighborsClassifier(n_neighbors = 20, weights = "distance") # TODO replace with balanced random forest
+            st_scores = self_training(x_train=x_train_all, y_train=y_train_all, cv_semisupervised=cv_semisupervised, base_model=knn, name="SelfTraining_1000")
+            all_scores.append(mean_kfolds(st_scores))
 
-    # F random forests (works)
-    print("Starting Random Forest Model ...")
-    rf_scores = random_forest(x_train, y_train, cv_stratified, visualize=False)
-    all_scores.append(mean_kfolds(rf_scores))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished Random Forest Model.\n")
+        elif (model_type == "rf") or (model_type == "rf_bal"):
+            rf_scores = random_forest(x_train, y_train, cv_stratified, visualize=False)
+            all_scores.append(mean_kfolds(rf_scores))
 
-    # G Support Vector Machines
-    # works with very high gamma (overfitting) -> "auto" yields 0.75, still good and no overfitting
-    print("Starting Support Vector Machine...")
-    svm_scores = svm(x_train, y_train, cv_stratified, gamma="auto")
-    all_scores.append(mean_kfolds(svm_scores))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished Support Vector Machine.\n")
+        # Support Vector Machines
+        # works with very high gamma (overfitting) -> "auto" yields 0.75, still good and no overfitting
+        elif model_type == "svm":
+            svm_scores = svm(x_train, y_train, cv_stratified, gamma="auto")
+            all_scores.append(mean_kfolds(svm_scores))
 
-    # H knn (works with weights=distance)
-    print("Starting K-Nearest Neighbours Model...")
-    knn_scores = knn(x_train, y_train, cv_stratified, n_neighbors=20)
-    all_scores.append(mean_kfolds(knn_scores))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished K-Nearest Neighbours Model.\n")
+        elif model_type == "knn":
+            knn_scores = knn(x_train, y_train, cv_stratified, n_neighbors=20)
+            all_scores.append(mean_kfolds(knn_scores))
 
-    # I adaboost
-    print("Starting AdaBoost Model...")
-    ada_scores = ada_boost(x_train, y_train, cv_stratified)
-    all_scores.append(mean_kfolds(ada_scores))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished AdaBoost Model.\n")
+        elif model_type == "easy_ensemble":
+            ada_scores = ada_boost(x_train, y_train, cv_stratified)
+            all_scores.append(mean_kfolds(ada_scores))
 
-    # J LSTM
-    print("Starting LSTM Model...")
-    lstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="lstm", cv=cv_timeseries, name="LSTM",
-                      batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
-    print(lstm_scores)
-    all_scores.append(mean_kfolds(lstm_scores))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished LSTM Model.\n")
+        elif model_type == "lstm":
+            lstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="lstm", cv=cv_timeseries, name="LSTM",
+                            batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
+            print(lstm_scores)
+            all_scores.append(mean_kfolds(lstm_scores))
 
-    # K BLSTM
-    print("Starting BLSTM Model...")
-    #  cv can be a float, or a cv split
-    blstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="blstm", cv=cv_timeseries, name="BLSTM",
-                       batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
-    print(blstm_scores)
-    all_scores.append(mean_kfolds(blstm_scores))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished BLSTM Model.\n")
+        elif model_type == "blstm":
+            #  cv can be a float, or a cv split
+            blstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="blstm", cv=cv_timeseries, name="BLSTM",
+                            batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
+            print(blstm_scores)
+            all_scores.append(mean_kfolds(blstm_scores))
 
-    # J Encoder-Decoder
-    print("Starting Encoder-Decoder Model...")
-    #  cv can be a float, or a cv split
-    encdec_scores = ann(x_train, y_train, smp_idx_train, ann_type="enc_dec", cv=cv_timeseries, name="ENC_DEC",
-                       batch_size=32, epochs=10, rnn_size=25, dense_units=0, dropout=0.2, learning_rate=0.001,
-                       attention=True, bidirectional=False)
-    print(encdec_scores)
-    all_scores.append(mean_kfolds(encdec_scores))
-    if intermediate_file is not None: save_results(intermediate_file, all_scores)
-    print("...finished Encoder-Decoder Model.\n")
+        elif model_type == "enc_dec":
+            #  cv can be a float, or a cv split
+            encdec_scores = ann(x_train, y_train, smp_idx_train, ann_type="enc_dec", cv=cv_timeseries, name="ENC_DEC",
+                            batch_size=32, epochs=10, rnn_size=25, dense_units=0, dropout=0.2, learning_rate=0.001,
+                            attention=True, bidirectional=False)
+            print(encdec_scores)
+            all_scores.append(mean_kfolds(encdec_scores))
+
+        if intermediate_file is not None: save_results(intermediate_file, all_scores)
+        print("...finished {} Model.\n".format(name))
 
 def main():
     args = parser.parse_args()
@@ -877,7 +872,7 @@ def main():
     # VALIDATION
     if args.validate:
         intermediate_results = "data/validation_results.txt"
-        validate_all_models(data, intermediate_results)
+        validate_all_models(data, intermediate_results, models=args.models)
 
         all_scores = load_results(intermediate_results)
 
@@ -894,10 +889,10 @@ def main():
                                                              "test_log_loss": "test_ll"})
         print(tabulate(pd.DataFrame(all_scores), headers="keys", tablefmt="psql"))
 
-        with open("output/tables/models_160smp_test01.txt", 'w') as f:
+        with open("output/tables/models_alps.txt", 'w') as f:
             f.write(tabulate(pd.DataFrame(all_scores), headers="keys", tablefmt="psql"))
 
-        with open("output/tables/models_160smp_test01_latex.txt", 'w') as f:
+        with open("output/tables/models_alps.txt", 'w') as f:
             f.write(tabulate(pd.DataFrame(all_scores), headers="keys", tablefmt="latex_raw"))
 
 
