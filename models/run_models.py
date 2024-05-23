@@ -743,9 +743,9 @@ def validate_all_models(data, intermediate_file=None, models=["all"], model_name
     """
     if models == ["all"]:
         all_models = ["baseline","rf", "rf_bal", 
-                      ]
+                      "lstm", "blstm"]
         all_names = ["Majority Vote", "Random Forest", "Balanced Random Forest", 
-                     ]
+                     "LSTM", "BLSTM"]
     else:
         all_models = models
     
@@ -768,7 +768,6 @@ def validate_all_models(data, intermediate_file=None, models=["all"], model_name
 
     # 9. Call the models
     all_scores = []
-
     for model_type, name in zip(all_models, all_names):
         print("Starting {} Model ...\n".format(name))
         # Baseline - majority class predicition
@@ -805,8 +804,12 @@ def validate_all_models(data, intermediate_file=None, models=["all"], model_name
             st_scores = self_training(x_train=x_train_all, y_train=y_train_all, cv_semisupervised=cv_semisupervised, base_model=knn, name="SelfTraining_1000")
             all_scores.append(mean_kfolds(st_scores))
 
-        elif (model_type == "rf") or (model_type == "rf_bal"):
+        elif model_type == "rf":
             rf_scores = random_forest(x_train, y_train, cv_stratified, visualize=False)
+            all_scores.append(mean_kfolds(rf_scores))
+        
+        elif model_type == "rf_bal":
+            rf_scores = random_forest(x_train, y_train, cv_stratified, visualize=False, resample=True, name=name)
             all_scores.append(mean_kfolds(rf_scores))
 
         # Support Vector Machines
@@ -827,14 +830,14 @@ def validate_all_models(data, intermediate_file=None, models=["all"], model_name
             lstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="lstm", cv=cv_timeseries, name="LSTM",
                             batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
             print(lstm_scores)
-            all_scores.append(mean_kfolds(lstm_scores))
+            all_scores.append(lstm_scores) #all_scores.append(mean_kfolds(lstm_scores)) 
 
         elif model_type == "blstm":
             #  cv can be a float, or a cv split
             blstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="blstm", cv=cv_timeseries, name="BLSTM",
                             batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
             print(blstm_scores)
-            all_scores.append(mean_kfolds(blstm_scores))
+            all_scores.append(blstm_scores) #all_scores.append(mean_kfolds(blstm_scores))
 
         elif model_type == "enc_dec":
             #  cv can be a float, or a cv split
