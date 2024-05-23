@@ -743,9 +743,9 @@ def validate_all_models(data, intermediate_file=None, models=["all"], model_name
     """
     if models == ["all"]:
         all_models = ["baseline","rf", "rf_bal", 
-                      "lstm", "blstm"]
+                      "svm","lstm", "blstm"]
         all_names = ["Majority Vote", "Random Forest", "Balanced Random Forest", 
-                     "LSTM", "BLSTM"]
+                     "Support Vector Machine","LSTM", "BLSTM"]
     else:
         all_models = models
     

@@ -14,7 +14,7 @@ EXAMPLE_SMP_PATH = "data/smp_pnt_files/"
 
 # filenames where data, normalized data and preprocessed data is stored
 SMP_ORIGINAL_NPZ = "data/all_smp_profiles.npz"
-SMP_NORMALIZED_NPZ = "data/all_smp_profiles_updated_normalized.npz" #dont need dthis one 
+SMP_NORMALIZED_NPZ = "data/all_smp_profiles_updated_normalized.npz" #dont need this one 
 SMP_PREPROCESSED_TXT = "data/preprocess_data.txt"
 
 
@@ -88,11 +88,11 @@ COLORS = {
     7: "#ADD8E6",
     8: "#0000FF",
     9: "#FF00FF",
-    10: "#9CE6AF",#own mixture of fc and df
+    10: "#D6C7D4", # mixture of fc and rg
     11: "#FF0000",
-    12: "#6E0000",#own mixture of mf and black
+    12: "#890000", # mixture of mf (red) and stripes (C40000) should be changed in red with vertical stripes
     13: "#00FFFF",
-    14: "blue",
+    14: "#000000",
 }
 
 # arguments for Preprocessing

@@ -130,16 +130,23 @@ def train_single_model(model, x_train, y_train, smp_idx_train, impl_type, **fit_
             fit call. This is important e.g. for anns, since epochs and
             batch size must be be specified during fitting.
     """
+    print("In train single model")
+    print("model: ", model)
+    print("x_train: ", x_train)
+    print("y_train: ", y_train)
+    print("smp_idx_train: ", smp_idx_train)
+    print("impl_type: ", impl_type)
+    print("fit_params: ", fit_params)
     # fitting and prediction based on the model implementation type
     if impl_type == "scikit":
         # fitting the model
         model.fit(x_train, y_train)
-        # # predict proba - special case SVM: change model, fit newly and predict
-        # if isinstance(model, SVC):
-        #     # change model
-        #     print("SVM prob fitting")
-        #     model.probability = True
-        #     model.fit(x_train, y_train)
+         # predict proba - special case SVM: change model, fit newly and predict
+        if isinstance(model, SVC):
+             # change model
+             print("SVM prob fitting")
+             model.probability = True
+             model.fit(x_train, y_train)
 
     elif impl_type == "keras":
         # fitting the model (is changed in place)
