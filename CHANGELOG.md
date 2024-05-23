@@ -248,13 +248,85 @@ First you have to preprocess your data for training
         and put the single validation of models into the following statement:
 
         ```
-        for model_type, name in zip(all_models, all_names):
+         for model_type, name in zip(all_models, all_names):
             print("Starting {} Model ...\n".format(name))
             # Baseline - majority class predicition
             if model_type == "baseline":
-            ...
+                baseline_scores = majority_class_baseline(x_train, y_train, cv_stratified)
+                all_scores.append(mean_kfolds(baseline_scores))
+
+            # kmeans clustering (does not work well)
+            # BEST cluster selection criterion: no difference, you can use either acc or sil (use sil in this case!)
             elif model_type == "kmeans":
-            ...
+                kmeans_scores = kmeans(unlabelled_smp_x, x_train, y_train, cv_stratified, num_clusters=10, find_num_clusters="acc", plot=False)
+                all_scores.append(mean_kfolds(kmeans_scores))
+
+            # mixture model clustering ("diag" works best at the moment)
+                # BEST cluster selection criterion: bic is slightly better than acc (generalization)
+            elif model_type == "gmm":
+                print("Starting Gaussian Mixture Model...")
+                gm_acc_diag = gaussian_mix(unlabelled_smp_x, x_train, y_train, cv_stratified, cov_type="diag", find_num_components="acc", plot=False)
+                all_scores.append(mean_kfolds(gm_acc_diag))
+
+            elif model_type == "bmm":
+                bgm_acc_diag = bayesian_gaussian_mix(unlabelled_smp_x, x_train, y_train, cv_stratified, cov_type="diag")
+                all_scores.append(mean_kfolds(bgm_acc_diag))
+
+            # TAKES A LOT OF TIME FOR COMPLETE DATA SET
+            # label_spreading and self training model -> different data preparation necessary
+
+            elif model_type == "label_spreading":
+                ls_scores = label_spreading(x_train=x_train_all, y_train=y_train_all, cv_semisupervised=cv_semisupervised, name="LabelSpreading_1000")
+                all_scores.append(mean_kfolds(ls_scores))
+
+            elif model_type == "self_trainer":
+                knn = KNeighborsClassifier(n_neighbors = 20, weights = "distance") # TODO replace with balanced random forest
+                st_scores = self_training(x_train=x_train_all, y_train=y_train_all, cv_semisupervised=cv_semisupervised, base_model=knn, name="SelfTraining_1000")
+                all_scores.append(mean_kfolds(st_scores))
+
+            elif model_type == "rf":
+                rf_scores = random_forest(x_train, y_train, cv_stratified, visualize=False)
+                all_scores.append(mean_kfolds(rf_scores))
+
+            elif model_type == "rf_bal":
+                rf_scores = random_forest(x_train, y_train, cv_stratified, visualize=False, resample=True, name=name)
+                all_scores.append(mean_kfolds(rf_scores))
+
+            # Support Vector Machines
+            # works with very high gamma (overfitting) -> "auto" yields 0.75, still good and no overfitting
+            elif model_type == "svm":
+                svm_scores = svm(x_train, y_train, cv_stratified, gamma="auto")
+                all_scores.append(mean_kfolds(svm_scores))
+
+            elif model_type == "knn":
+                knn_scores = knn(x_train, y_train, cv_stratified, n_neighbors=20)
+                all_scores.append(mean_kfolds(knn_scores))
+
+            elif model_type == "easy_ensemble":
+                ada_scores = ada_boost(x_train, y_train, cv_stratified)
+                all_scores.append(mean_kfolds(ada_scores))
+
+            elif model_type == "lstm":
+                lstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="lstm", cv=cv_timeseries, name="LSTM",
+                                batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
+                print(lstm_scores)
+                all_scores.append(lstm_scores) #all_scores.append(mean_kfolds(lstm_scores))
+
+            elif model_type == "blstm":
+                #  cv can be a float, or a cv split
+                blstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="blstm", cv=cv_timeseries, name="BLSTM",
+                                batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
+                print(blstm_scores)
+                all_scores.append(blstm_scores) #all_scores.append(mean_kfolds(blstm_scores))
+
+            elif model_type == "enc_dec":
+                #  cv can be a float, or a cv split
+                encdec_scores = ann(x_train, y_train, smp_idx_train, ann_type="enc_dec", cv=cv_timeseries, name="ENC_DEC",
+                                batch_size=32, epochs=10, rnn_size=25, dense_units=0, dropout=0.2, learning_rate=0.001,
+                                attention=True, bidirectional=False)
+                print(encdec_scores)
+                all_scores.append(mean_kfolds(encdec_scores))
+
             if intermediate_file is not None: save_results(intermediate_file, all_scores)
             print("...finished {} Model.\n".format(name))
         ```
