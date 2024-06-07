@@ -355,6 +355,20 @@ Line336 and Line 344
                         title="All Observed SMP Profiles of the Testing Data", file_name=save_file, profile_name=EXAMPLE_SMP_NAME)
 ```
 
+### supervised_models.py
+
+For adaboost is a updated syntax for the spelling in sampeling_strategy. Update in Line 111
+
+```
+    def ada_boost(x_train, y_train, cv, n_estimators=100, sampling_strategy="not_majority", name="AdaBoost", only_model=False, **kwargs):
+```
+
+to `not majority` (change underscore in blank)
+
+```
+    def ada_boost(x_train, y_train, cv, n_estimators=100, sampling_strategy="", name="AdaBoost", only_model=False, **kwargs):
+```
+
 ## Visualization
 
 ### plot_data.py
@@ -614,3 +628,8 @@ change to
             fig = plt.figure(figsize=(16,10))
             ax = fig.add_subplot(projection='3d')
     ```
+
+## predict.py
+
+For predictions of raw smp files
+... in progress, see commit on Jun 7, 2024
