@@ -113,6 +113,8 @@ def idx_to_int(string_idx):
         return int("4" + string_idx[-4:].zfill(6))
     elif "S36M" in string_idx:
         return int("5" + string_idx[-4:].zfill(6))
+    elif "S45M" in string_idx:
+        return int("6" + string_idx[-4:].zfill(6))
     else:
         raise ValueError("SMP naming convention is unknown. Please add another elif line in idx_to_int to handle your SMP naming convention.")
 

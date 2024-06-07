@@ -4,7 +4,7 @@
 2,eval_recall,0.5319327731092437,svm
 3,eval_precision,0.5824828717937864,svm
 4,eval_f1,0.5212459625275301,svm
-5,eval_fit_time,94.30440068244934,svm
-6,eval_score_time,64.43653059005737,svm
+5,eval_fit_time,104.51195478439331,svm
+6,eval_score_time,67.74641919136047,svm
 7,eval_roc_auc,0.8903000140848804,svm
 8,eval_log_loss,0.8896502136510209,svm

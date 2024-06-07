@@ -827,10 +827,10 @@ def validate_all_models(data, intermediate_file=None, models=["all"], model_name
             all_scores.append(mean_kfolds(ada_scores))
 
         elif model_type == "lstm":
-            lstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="lstm", cv=cv_timeseries, name="LSTM",
+            lstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="lstm", cv_timeseries=cv_timeseries, name="LSTM",
                             batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
             print(lstm_scores)
-            all_scores.append(lstm_scores) #all_scores.append(mean_kfolds(lstm_scores)) 
+            all_scores.append(mean_kfolds(lstm_scores)) 
 
         elif model_type == "blstm":
             #  cv can be a float, or a cv split

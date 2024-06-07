@@ -5,6 +5,7 @@ import joblib
 import pickle
 
 import numpy as np
+import pandas as pd
 from tqdm import tqdm
 from pathlib import Path
 from tensorflow import keras
@@ -16,8 +17,9 @@ from models.cv_handler import assign_clusters_single_profile
 from models.anns import predict_single_profile_ann
 from models.run_models import remove_nans_mosaic, normalize_mosaic
 from models.helper_funcs import int_to_idx
+from visualization.plot_profile import smp_labelled
 from tuning.tuning_parameters import BEST_PARAMS
-from data_handling.data_parameters import ANTI_LABELS, PARAMS
+from data_handling.data_parameters import ANTI_LABELS, PARAMS, EXP_LOC
 from data_handling.data_preprocessing import export_pnt, npz_to_pd, search_markers
 
 # make an argparser for knowing which model should be used
@@ -25,8 +27,9 @@ from data_handling.data_preprocessing import export_pnt, npz_to_pd, search_marke
 # and where the results should be saved (and if visualizations should be stored as well)
 
 # make predictions for all files in this folder
-
-IN_DIR = "/home/julia/Documents/University/BA/Data/Arctic_updated/"
+parentdir = Path(__file__).parent.as_posix()
+IN_DIR = parentdir + "/data/raw_smp_prediction/"
+MARKER_PATH = "data/markers_pred.csv"
 
 # save both the pics and the results as .ini files
 def predict_profile(smp, model, data, model_type):
@@ -88,7 +91,7 @@ def load_markers(marker_path):
             marker_dic[key] = (float(sfc_val), float(ground_val))
     return marker_dic
 
-def predict_all(unlabelled_dir=IN_DIR, marker_path="data/sfc_ground_markers.csv", mm_window=1, overwrite=True):
+def predict_all(unlabelled_dir=IN_DIR, marker_path=MARKER_PATH, mm_window=1, overwrite=True):
     """ Main function to predict the given set of profiles
     Parameters:
         unlabelled_dir (Path): where the unlabelled data is stored
@@ -102,40 +105,34 @@ def predict_all(unlabelled_dir=IN_DIR, marker_path="data/sfc_ground_markers.csv"
     Path(location).mkdir(parents=True, exist_ok=True)
 
     # we need some of the information from our training data
-    with open("data/preprocessed_data_k5.txt", "rb") as handle:
+    with open("data/preprocess_data.txt", "rb") as handle:
         data = pickle.load(handle)
 
     # get current git commit
     repo = git.Repo(search_parent_directories=True)
     git_id = repo.head.object.hexsha
-    # baseline ALL
-    # lstm ALL
-    # rf ALL
-    # rf_bal ALL
-    # svm SOME
-    # knn ALL
-    # easy_ensemble SOME
-    # self_trainer ALL
-    # kmeans ALL
-    # gmm ALL
-    # bmm ALL
-    # blstm ALL
-    # enc_dec ALL
-    # "baseline", "rf", "rf_bal", "knn",
-    models = ["kmeans", "gmm", "bmm", "lstm", "blstm", "enc_dec", "self_trainer", "easy_ensemble"]
-    models = ["svm"]
-    # TODO svm
+
+    models = ["baseline","rf", "rf_bal", 
+                "svm","lstm", "blstm", "enc_dec", "easy_ensemble"]
+    models = ["enc_dec"]
+    # TODO svm ()
     smp_profiles = load_profiles(unlabelled_dir)
 
-    markers = load_markers(marker_path)
+    #markers = load_markers(marker_path)
+    #print("Finished load markers")
 
     # for all desired models create predictions
     for model_name in models:
         print("Starting to create predictions for model {}:".format(model_name))
-        sub_location = location + "/" + model_name + "/"
+        sub_location_ini = location + "/" + model_name + "/ini/"
         # make dir if it doesnt exist yet
-        if not os.path.exists(sub_location):
-            os.makedirs(sub_location)
+        if not os.path.exists(sub_location_ini):
+            os.makedirs(sub_location_ini)
+
+        sub_location_plot = location + "/" + model_name + "/plot/"
+        # make dir if it doesnt exist yet
+        if not os.path.exists(sub_location_plot):
+            os.makedirs(sub_location_plot)
 
         # load model
         model, model_type = load_stored_model(model_name)
@@ -146,7 +143,7 @@ def predict_all(unlabelled_dir=IN_DIR, marker_path="data/sfc_ground_markers.csv"
             unlabelled_smp.reset_index(inplace=True, drop=True)
             # get smp idx
             smp_idx_str = int_to_idx(unlabelled_smp["smp_idx"][0])
-            save_file = sub_location + "/" + smp_idx_str + ".ini"
+            save_file = sub_location_ini + "/" + smp_idx_str + ".ini"
 
             # predict profile
             if (not Path(save_file).is_file()) or overwrite:
@@ -156,20 +153,32 @@ def predict_all(unlabelled_dir=IN_DIR, marker_path="data/sfc_ground_markers.csv"
                 if sum(unlabelled_smp.isnull().any(axis=1)) == 0:
 
                     labelled_smp = predict_profile(unlabelled_smp, model, data, model_type)
+                    
+                    labelled_smp_df = pd.DataFrame(labelled_smp, columns=["label"])
+                    #delete old labels of unlabelled_smp
+                    unlabelled_smp.drop(columns=["label"], inplace=True)
+                    #merge unlabelled_smp with labelled_smp to combine all informations for visualization
+                    smp = pd.concat([unlabelled_smp, labelled_smp_df], axis=1)
 
                     try: # get markers
-                        sfc, ground = markers[smp_idx_str]
-                        # save ini
-                        save_as_ini(labelled_smp, sfc, ground, save_file, model_name, git_id)
+                        #sfc, ground = markers[smp_idx_str]
+                        # save ini save_as_ini(labelled_smp, sfc, ground, save_file, model_name, git_id)
+                        save_as_ini(labelled_smp, save_file, model_name, git_id)
                     except KeyError:
                         print("Skipping Profile " + smp_idx_str + " since it is not contained in the marker file.")
                     # save figs
-                    #save_as_pic(labelled_smp)
+                    #save_as_pic() #does not work yet
+                    #smp_idx_list = [float(smp_idx_str)]
+                    smp_idx_float = float(smp_idx_str)
+                    smp_labelled(smp, smp_idx_float, file_name=sub_location_plot+smp_idx_str)
                 else:
                     print("Skipping Profile "+ smp_idx_str + " since it contains to many NaNs.")
+        #smp_idx_list = [float(smp_idx_str)]
+        #plot_testing(y_pred=labelled_smp, y_pred_prob=[], metrics_per_label=[], x_test=[], y_test=[],
+        #                 smp_idx_test=smp_idx_str, labels_order=None, annot="test", name=model_name, only_preds=True, plot_list= smp_idx_list, save_dir=location, **PARAMS)
 
 
-def save_as_ini(labelled_smp, sfc, ground, location, model, git_commit_id, mm_window=1):
+def save_as_ini(labelled_smp, location, model, git_commit_id, mm_window=1): #(labelled_smp, sfc, ground, location, model, git_commit_id, mm_window=1):
     """ Save the predictions of an smp profile as ini file.
     Parameters:
         labelled_smp (list): predictions of a single unknown smp profile
@@ -194,10 +203,11 @@ def save_as_ini(labelled_smp, sfc, ground, location, model, git_commit_id, mm_wi
     # label_occ: (label, number of consecutive occurences)
     for label_occ in labels_occs:
         str_label = ANTI_LABELS[label_occ[0]]
-        if complete_dist == 0:
-            dist = (label_occ[1] - 1 + sfc) * mm_window
-        else:
-            dist = (label_occ[1]) * mm_window
+        #if complete_dist == 0:
+        #    dist = (label_occ[1] - 1 + sfc) * mm_window
+        #else:
+        #    dist = (label_occ[1]) * mm_window#
+        dist = (label_occ[1]) * mm_window
         complete_dist += dist
         str_label_dist_pairs.append((str_label, complete_dist))
 
@@ -205,12 +215,12 @@ def save_as_ini(labelled_smp, sfc, ground, location, model, git_commit_id, mm_wi
         file.write("[markers]\n")
         # file.write("# [model] = " + model) # model must be included in function
         # add surface marker
-        file.write("surface = " + str(sfc) + "\n")
+        #file.write("surface = " + str(sfc) + "\n")
         # add snowgrain markers
         for (label, dist) in str_label_dist_pairs:
             file.write(label + " = " + str(dist) + "\n")
         # ground level is the same like last label
-        file.write("ground = " + str(ground) + "\n")
+        #file.write("ground = " + str(ground) + "\n")
         file.write("[model]\n")
         file.write(model + " = " + git_commit_id)
 
@@ -219,13 +229,14 @@ def load_profiles(data_dir, overwrite=False):
     Returns:
         list <pd.Dataframe>: normalized smp data
     """
-    #export_dir = Path("data/smp_profiles_unlabelled/")
-    export_dir = Path("data/smp_profiles_updated/")
+    #export_dir = Path("data/smp_profiles_unlabelled/") export_dir = Path("data/smp_profiles_updated/")
+    #export_dir = Path("data/smp_profiles/") #=in data_loader wird die auch verwendet, hier ist export dir= exp_loc
+    export_dir = Path("data/smp_npz_profiles_pred/")
     data_dir = Path(data_dir)
     marker_path = Path("data/sfc_ground_markers.csv")
     export = False
     markers = False
-    filter = True
+    filter = False #True
     # export data from pnt to csv or npz
     if export:
         export_pnt(pnt_dir=data_dir, target_dir=export_dir, export_as="npz", overwrite=False, **PARAMS)
@@ -242,7 +253,7 @@ def load_profiles(data_dir, overwrite=False):
         all_smp = all_smp[(all_smp["label"] == 0)]
 
     # normalize the data to get correct predictions
-    all_smp = normalize_mosaic(all_smp)
+    #all_smp = normalize_mosaic(all_smp) #not for other data than mosaic
 
     # create list structure of smp profiles
     num_profiles = all_smp["smp_idx"].nunique()
@@ -271,10 +282,11 @@ def load_stored_model(model_name):
 
     # get stored model (models/stored_models)
     if model_type == "keras":
-        model_filename = "models/stored_models/" + model_name + ".hdf5"
         if model_name != "enc_dec":
+            model_filename = "models/stored_models/" + model_name + ".hdf5"
             loaded_model = keras.models.load_model(model_filename)
         else:
+            model_filename = "models/stored_models/" + model_name + ".keras"
             loaded_model = keras.models.load_model(model_filename, custom_objects={"SeqSelfAttention": SeqSelfAttention})
     else:
         model_filename = "models/stored_models/" + model_name + ".model"
