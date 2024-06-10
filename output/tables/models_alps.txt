@@ -2,6 +2,6 @@
 \hline
     &   fit_time &   score_time &   train_bal_acc &   train_absolute_accuracy &   train_rec &   train_prec &   train_f1 &   test_bal_acc &   test_absolute_accuracy &   test_rec &   test_prec &   test_f1 &   train_roc &   train_ll &   test_roc &   test_ll & model   \\
 \hline
-  0 &    18.9816 &       1.3633 &        0.138229 &                  0.413048 &    0.413048 &     0.232514 &   0.283466 &       0.138375 &                 0.412054 &   0.412054 &    0.231685 &  0.280448 &    0.678649 &    1.73338 &     0.6765 &   1.73706 & LSTM    \\
+  0 &    33.0216 &     0.172915 &        0.153078 &                  0.423442 &    0.423442 &      0.24076 &   0.279144 &       0.142681 &                 0.395332 &   0.395332 &    0.228866 &  0.261859 &    0.754163 &    1.63508 &   0.740871 &    1.6916 & BLSTM   \\
 \hline
 \end{tabular}

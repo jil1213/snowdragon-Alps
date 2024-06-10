@@ -834,14 +834,14 @@ def validate_all_models(data, intermediate_file=None, models=["all"], model_name
 
         elif model_type == "blstm":
             #  cv can be a float, or a cv split
-            blstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="blstm", cv=cv_timeseries, name="BLSTM",
+            blstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="blstm", cv_timeseries=cv_timeseries, name="BLSTM",
                             batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
             print(blstm_scores)
-            all_scores.append(blstm_scores) #all_scores.append(mean_kfolds(blstm_scores))
+            all_scores.append(mean_kfolds(blstm_scores))
 
         elif model_type == "enc_dec":
             #  cv can be a float, or a cv split
-            encdec_scores = ann(x_train, y_train, smp_idx_train, ann_type="enc_dec", cv=cv_timeseries, name="ENC_DEC",
+            encdec_scores = ann(x_train, y_train, smp_idx_train, ann_type="enc_dec", cv_timeseries=cv_timeseries, name="ENC_DEC",
                             batch_size=32, epochs=10, rnn_size=25, dense_units=0, dropout=0.2, learning_rate=0.001,
                             attention=True, bidirectional=False)
             print(encdec_scores)
