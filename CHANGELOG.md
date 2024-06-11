@@ -307,21 +307,21 @@ First you have to preprocess your data for training
                 all_scores.append(mean_kfolds(ada_scores))
 
             elif model_type == "lstm":
-                lstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="lstm", cv=cv_timeseries, name="LSTM",
+                lstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="lstm", cv_timeseries=cv_timeseries, name="LSTM",
                                 batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
                 print(lstm_scores)
-                all_scores.append(lstm_scores) #all_scores.append(mean_kfolds(lstm_scores))
+                all_scores.append(mean_kfolds(lstm_scores))
 
             elif model_type == "blstm":
                 #  cv can be a float, or a cv split
-                blstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="blstm", cv=cv_timeseries, name="BLSTM",
+                blstm_scores = ann(x_train, y_train, smp_idx_train, ann_type="blstm", cv_timeseries=cv_timeseries, name="BLSTM",
                                 batch_size=32, epochs=10, rnn_size=25, dense_units=25, dropout=0.2, learning_rate=0.01)
                 print(blstm_scores)
-                all_scores.append(blstm_scores) #all_scores.append(mean_kfolds(blstm_scores))
+                all_scores.append(mean_kfolds(blstm_scores))
 
             elif model_type == "enc_dec":
                 #  cv can be a float, or a cv split
-                encdec_scores = ann(x_train, y_train, smp_idx_train, ann_type="enc_dec", cv=cv_timeseries, name="ENC_DEC",
+                encdec_scores = ann(x_train, y_train, smp_idx_train, ann_type="enc_dec", cv_timeseries=cv_timeseries, name="ENC_DEC",
                                 batch_size=32, epochs=10, rnn_size=25, dense_units=0, dropout=0.2, learning_rate=0.001,
                                 attention=True, bidirectional=False)
                 print(encdec_scores)
@@ -368,6 +368,49 @@ to `not majority` (change underscore in blank)
 ```
     def ada_boost(x_train, y_train, cv, n_estimators=100, sampling_strategy="", name="AdaBoost", only_model=False, **kwargs):
 ```
+
+### anns.py
+
+-   Update the `def calculate_metrics_ann()` by adding the input parameter cv: in Line 396
+
+    ```
+    def calculate_metrics_ann(results, cv, name=None):
+    ```
+
+    set the input parameter `cv=cv` in the lines 406 and 407, 409 and 410
+
+    ```
+        all_scores.update(calculate_metrics_raw(y_trues=results["y_true_train"], y_preds=results["y_pred_train"], metrics=METRICS, cv=cv, annot="train"))
+        all_scores.update(calculate_metrics_raw(y_trues=results["y_true_valid"], y_preds=results["y_pred_valid"], metrics=METRICS, cv=cv, annot="test"))
+    ```
+
+-   upadte the `def ann()`
+    add the input parameter `cv` when calling the `return calculate_metrics_ann()`
+    In Line 618 set `cv=False`
+    ```
+        return calculate_metrics_ann(results, cv=False , name=name)
+    ```
+    In Line655 (the else statement) set `cv=True`
+    ```
+        return calculate_metrics_ann(results, cv=True , name=name)
+    ```
+    Also update the dictonary `all_results={}` by deleting Line 622 and 633 key_assigned=False, and adding
+    ```
+    all_results = { # the rest is added on its own
+            "score_time": [],
+            "fit_time": [],
+            "y_true_train": [],
+            "y_true_valid": [],
+            "y_pred_train": [],
+            "y_pred_valid": [],
+            "y_pred_prob_train": [],
+            "y_pred_prob_valid": [],
+         }
+    ```
+    delete the if not keys_assigned statement and the appendix to the dictonary (Line 641-654) and add instead:
+    ```
+    all_results[key].append(k_results[key])
+    ```
 
 ## Visualization
 
@@ -458,15 +501,12 @@ You can also comment the direct decision which label gets which decision tree la
 -   the seaborn plot has been udated, so a new syntax for lineplot is needed. Update all `sns.lineplot()` statements (8 statements)
     update:
 
-    ```
-    sns.lineplot(x,y,...)
-    ```
+        ```
+        sns.lineplot(x,y,...)
+        ```
 
-into:
-
-    ```
-    sns.lineplot(data=(x,y),...)
-    ```
+    into:
+    `sns.lineplot(data=(x,y) )`
 
 -   update the following seaborn lineplot statements:
     Line351 in `def compare_model_and_profiles()`
