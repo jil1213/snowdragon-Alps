@@ -743,9 +743,9 @@ def validate_all_models(data, intermediate_file=None, models=["all"], model_name
     """
     if models == ["all"]:
         all_models = ["baseline","rf", "rf_bal", 
-                      "svm","lstm", "blstm"]
+                      "lstm", "blstm"]
         all_names = ["Majority Vote", "Random Forest", "Balanced Random Forest", 
-                     "Support Vector Machine","LSTM", "BLSTM"]
+                     "LSTM", "BLSTM"]
     else:
         all_models = models
     
@@ -898,6 +898,8 @@ def main():
         with open("output/tables/models_alps.txt", 'w') as f:
             f.write(tabulate(pd.DataFrame(all_scores), headers="keys", tablefmt="latex_raw"))
 
+        #save as csv 
+        pd.DataFrame(all_scores).to_csv("output/tables/models_alps.csv", index=False)
 
 
 if __name__ == "__main__":

@@ -1,7 +1,11 @@
-\begin{tabular}{rrrrrrrrrrrrrrrrrl}
+\begin{tabular}{rlrrrrrrrrrrrrrrrr}
 \hline
-    &   fit_time &   score_time &   train_bal_acc &   train_absolute_accuracy &   train_rec &   train_prec &   train_f1 &   test_bal_acc &   test_absolute_accuracy &   test_rec &   test_prec &   test_f1 &   train_roc &   train_ll &   test_roc &   test_ll & model   \\
+    & model                 &   train_bal_acc &   train_absolute_accuracy &   train_rec &   train_prec &   train_f1 &   test_bal_acc &   test_absolute_accuracy &   test_rec &   test_prec &   test_f1 &    fit_time &   score_time &   train_roc &    train_ll &   test_roc &    test_ll \\
 \hline
-  0 &    33.0216 &     0.172915 &        0.153078 &                  0.423442 &    0.423442 &      0.24076 &   0.279144 &       0.142681 &                 0.395332 &   0.395332 &    0.228866 &  0.261859 &    0.754163 &    1.63508 &   0.740871 &    1.6916 & BLSTM   \\
+  0 & MajorityClassBaseline &        0.111111 &                  0.373924 &    0.373924 &     0.139819 &   0.203532 &       0.111111 &                 0.373924 &   0.373924 &    0.139819 &  0.203532 &  0.00416632 &    0.01349   &  nan        & nan         & nan        & nan        \\
+  1 & RandomForest          &        0.962724 &                  0.991087 &    0.991087 &     0.991092 &   0.991068 &       0.823665 &                 0.938348 &   0.938348 &    0.93827  &  0.937918 &  3.55535    &    0.0193739 &    0.999904 &   0.0986629 &   0.995648 &   0.259227 \\
+  2 & rf_bal                &        0.756635 &                  0.604291 &    0.604291 &     0.638318 &   0.603219 &       0.745311 &                 0.600606 &   0.600606 &    0.634603 &  0.59947  &  0.231955   &    0.0139936 &    0.874086 &   2.11705   &   0.871628 &   2.1681   \\
+  3 & LSTM                  &        0.152594 &                  0.4173   &    0.4173   &     0.22012  &   0.261743 &       0.155392 &                 0.406958 &   0.406958 &    0.192427 &  0.2532   & 30.3771     &    0.199654  &    0.740001 &   1.65529   &   0.708201 &   1.68491  \\
+  4 & BLSTM                 &        0.167052 &                  0.429398 &    0.429398 &     0.278618 &   0.303039 &       0.16372  &                 0.40757  &   0.40757  &    0.264652 &  0.293338 & 45.2056     &    0.262359  &    0.769938 &   1.57835   &   0.757614 &   1.61388  \\
 \hline
 \end{tabular}

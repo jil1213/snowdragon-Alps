@@ -92,7 +92,7 @@ def load_markers(marker_path):
     return marker_dic
 
 def predict_all(unlabelled_dir=IN_DIR, marker_path=MARKER_PATH, mm_window=1, overwrite=True):
-    """ Main function to predict the given set of profiles
+    """  Main function to predict the given set of profiles
     Parameters:
         unlabelled_dir (Path): where the unlabelled data is stored
         marker_path (Path): csv file with sfc and ground markers
@@ -114,7 +114,7 @@ def predict_all(unlabelled_dir=IN_DIR, marker_path=MARKER_PATH, mm_window=1, ove
 
     models = ["baseline","rf", "rf_bal", 
                 "svm","lstm", "blstm", "enc_dec", "easy_ensemble"]
-    models = ["enc_dec"]
+    models = ["rf"]
     # TODO svm ()
     smp_profiles = load_profiles(unlabelled_dir)
 
