@@ -4,6 +4,7 @@ import git
 import joblib
 import pickle
 
+import configparser
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
@@ -91,6 +92,26 @@ def load_markers(marker_path):
             marker_dic[key] = (float(sfc_val), float(ground_val))
     return marker_dic
 
+def load_markers_ini(marker_path_ini, smp_idx_str):
+    """ Loads and returns sfc and ground markers with profile name as key
+    Parameters:
+        marker_path_ini (Path): where the markers are stored in .ini file
+        smp_idx_str (string): profile name
+    Returns:
+        dict < smp_name: (surface, ground) >: marker dictionary
+    """
+    smp_idx_str = "S45M" +smp_idx_str[3:]
+    file_path = os.path.join(marker_path_ini, f"{smp_idx_str}.ini")
+
+    with open(file_path, 'r') as file:
+        marker_dic = {}
+        for line in file:
+            if line.startswith('surface') or line.startswith('ground'):
+                key, value = line.split('=')
+                marker_dic[key.strip()] = float(value.strip())
+
+    return marker_dic
+
 def predict_all(unlabelled_dir=IN_DIR, marker_path=MARKER_PATH, mm_window=1, overwrite=True):
     """  Main function to predict the given set of profiles
     Parameters:
@@ -145,6 +166,9 @@ def predict_all(unlabelled_dir=IN_DIR, marker_path=MARKER_PATH, mm_window=1, ove
             smp_idx_str = int_to_idx(unlabelled_smp["smp_idx"][0])
             save_file = sub_location_ini + "/" + smp_idx_str + ".ini"
 
+            # load markers 
+            markers = load_markers_ini(unlabelled_dir, smp_idx_str)
+
             # predict profile
             if (not Path(save_file).is_file()) or overwrite:
                 # fill nans
@@ -161,9 +185,10 @@ def predict_all(unlabelled_dir=IN_DIR, marker_path=MARKER_PATH, mm_window=1, ove
                     smp = pd.concat([unlabelled_smp, labelled_smp_df], axis=1)
 
                     try: # get markers
-                        #sfc, ground = markers[smp_idx_str]
-                        # save ini save_as_ini(labelled_smp, sfc, ground, save_file, model_name, git_id)
-                        save_as_ini(labelled_smp, save_file, model_name, git_id)
+                        sfc, ground = markers["surface"], markers["ground"]
+                        # save ini 
+                        save_as_ini(labelled_smp, sfc, ground, save_file, model_name, git_id)
+                        #save_as_ini(labelled_smp, save_file, model_name, git_id)
                     except KeyError:
                         print("Skipping Profile " + smp_idx_str + " since it is not contained in the marker file.")
                     # save figs
@@ -178,7 +203,7 @@ def predict_all(unlabelled_dir=IN_DIR, marker_path=MARKER_PATH, mm_window=1, ove
         #                 smp_idx_test=smp_idx_str, labels_order=None, annot="test", name=model_name, only_preds=True, plot_list= smp_idx_list, save_dir=location, **PARAMS)
 
 
-def save_as_ini(labelled_smp, location, model, git_commit_id, mm_window=1): #(labelled_smp, sfc, ground, location, model, git_commit_id, mm_window=1):
+def save_as_ini(labelled_smp, sfc, ground, location, model, git_commit_id, mm_window=1):  #(labelled_smp, location, model, git_commit_id, mm_window=1)
     """ Save the predictions of an smp profile as ini file.
     Parameters:
         labelled_smp (list): predictions of a single unknown smp profile
@@ -215,12 +240,12 @@ def save_as_ini(labelled_smp, location, model, git_commit_id, mm_window=1): #(la
         file.write("[markers]\n")
         # file.write("# [model] = " + model) # model must be included in function
         # add surface marker
-        #file.write("surface = " + str(sfc) + "\n")
+        file.write("surface = " + str(sfc) + "\n")
         # add snowgrain markers
         for (label, dist) in str_label_dist_pairs:
             file.write(label + " = " + str(dist) + "\n")
         # ground level is the same like last label
-        #file.write("ground = " + str(ground) + "\n")
+        file.write("ground = " + str(ground) + "\n")
         file.write("[model]\n")
         file.write(model + " = " + git_commit_id)
 
