@@ -1,6 +1,6 @@
 # snowdragon-Alps
 
-This repository can be used to run and compare different models for the classification and segmentation of Snow Micro Pen (SMP) profiles. It is a modification of snowdragon with modified grain types and different training data.
+This repository can be used to run and compare different models for the classification and segmentation of Snow Micro Pen (SMP) profiles. It is a modification of the origin repo snowdragon with modified grain types and different training data. The code is updated and adapted to train with a new dataset. 
 
 The SMP is a fast, high-resolution, portable snow hardness measurement device. The automatic classification and segmentation models can be used for the fast analysis of vast numbers of SMP profiles. For more information about the background of snow layer segmentation and grain type classification please refer to the related publicatoins. Throughout the project the SMP dataset collected during the MOSAiC expedition was used. The plots and results of the different models can be reproduced with this repository.
 
@@ -77,9 +77,23 @@ For explanations of further preprocessing options run `python -m data_handling.d
 For smooth default usage, set the `SMP_LOC` in `data_handling/data_parameters.py` to the path where all raw SMP data is stored. At the default and original folder structure raw data is stored in `/data/smp_pnt_files`.
 Also set `EXP_LOC` to `/data/smp_profiles` where the preprocessed data should be stored after running preprocessing.
 
+### Training
+
+The models can be trained new. This can be done for each model with:
+
+```
+python -m models.run_models --train_and_store --models [wished_models]
+```
+
+To train all models use: 
+
+```
+python -m models.run_models --train_and_store
+```
+
 ### Tuning
 
-Tuning can be skipped. The default hyperparameters of all models are set to the values which produced the best results for the MOSAiC SMP dataset.
+Tuning can be skipped. It was not used in snowdragon-alps. The default hyperparameters of all models are set to the values which produced the best results for the MOSAiC SMP dataset.
 
 To run tuning, run first model evaluation to create a split up (training, validation, testing) and normalized dataset. The results are saved e.g. in `data/preprocessed_data_k5.txt`. To tune all models simply run the prepared bash script:
 
@@ -109,13 +123,24 @@ Preprocessing the complete data set (including data splits and preparing it for 
 python -m models.run_models --preprocess
 ```
 
-Afterwards one can just include a flag for evaluating or validating: (All results are stored for each model in the folder `output/evaluation`.)
+Afterwards one can just include a flag for evaluating or validating: (All results are stored for each model in the folder `output/evaluation`.)(not used in Snowdragon-Alps) 
 
 ```
 python -m models.run_models --evaluate --validate
 ```
 
-Here is the full command, where the smp file and the preprocessed dataset file can be set:
+It's also possible to evaluate just one model ( used in Snowdragon-Alps) 
+
+```
+python -m models.run_models --evaluate --models [wished_model]
+```
+
+The same can be done wit the validation
+```
+python -m models.run_models --validate --models [wished_model]
+```
+
+Here is the full command, where the smp file and the preprocessed dataset file can be set (not used in snowdragon-Alps):
 
 ```
 python -m --smp_npz [path_npz_file] --preprocess_file [path_txt_file] --preprocess --validate --evaluate
@@ -129,6 +154,7 @@ python -m --smp_npz [path_npz_file] --preprocess_file [path_txt_file] --preproce
 
 ### Visualization
 
+(not used in Snowdragon-Alps) 
 The data, preprocessing and results are also visualized. The plots are stored in `outcome` and can already be found there. There are three sets of plots that can be created: Visualizations of the original data, the normalized data and the results. Look into the code to see which plots are shown and comment out specific plots in `run_visualization.py` if desired.
 
 ```
