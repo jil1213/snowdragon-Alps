@@ -4,11 +4,17 @@ This repository can be used to run and compare different models for the classifi
 
 The SMP is a fast, high-resolution, portable snow hardness measurement device. The automatic classification and segmentation models can be used for the fast analysis of vast numbers of SMP profiles. For more information about the background of snow layer segmentation and grain type classification please refer to the related publicatoins. Throughout the project the SMP dataset collected during the MOSAiC expedition was used. The plots and results of the different models can be reproduced with this repository.
 
+Data used for snowdragon: 
+
 -   SMP data: [Available on PANGAEA](https://doi.org/10.1594/PANGAEA.935934)
 -   Trained models: [Available on Zenodo](https://doi.org/10.5281/zenodo.7063520)
 -   About the SMP: [SLF Website](https://www.slf.ch/en/ueber-das-slf/versuchsanlagen-und-labors/kaeltelabor/snowmicropenr.html)
 -   About MOSAiC: [MOSAiC Website](https://mosaic-expedition.org/)
 -   Contact: [julia.kaltenborn@mila.quebec](mailto:julia.kaltenborn@mila.quebec)
+
+Data used for snowdragon-Alps: 
+-    SMP data RHOSSA campaign: https://envidat.ch/#/metadata/wfj_rhossa
+
 
 ## Related publications
 
