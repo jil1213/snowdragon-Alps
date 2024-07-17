@@ -401,10 +401,25 @@ def testing(model, x_train, y_train, x_test, y_test, smp_idx_train, smp_idx_test
 
     # make predictions for models. y_pred_prob is None if not possible
     print("\tCalculating Predictions...")
-    y_pred, y_pred_prob, fit_time, score_time = predicting(model, x_train,
+    y_pred, prelim_y_pred_prob, fit_time, score_time = predicting(model, x_train,
                 y_train, x_test, y_test, smp_idx_train, smp_idx_test,
                 unlabelled_data, impl_type, **plot_and_fit_params)
     print("\t...done.\n")
+
+    # searching for missing grain types in prediction
+    missing_grain_types_in_pred = np.array(list(set(np.unique(y_test)) - set(np.unique(y_pred))))
+
+    # when missing grain types in prediction, add probabilities 0 for these
+    if len(missing_grain_types_in_pred) > 0:
+        print("Missing Grain types in pred:", missing_grain_types_in_pred)
+        y_pred_prob = prelim_y_pred_prob
+        for missing_grain_type in np.sort(missing_grain_types_in_pred):
+            position_grain_type = np.argwhere(labels_order==missing_grain_type)[0][0]
+            new_col = np.zeros((prelim_y_pred_prob.shape[0], 1))
+            # add new column with zeros for missing grain type
+            y_pred_prob = np.hstack((y_pred_prob[:,:position_grain_type], new_col, y_pred_prob[:, position_grain_type:]))
+    else: 
+        y_pred_prob = prelim_y_pred_prob
 
     ############## SMOOTHING ###################################################
     # use a majority vote inside the window
