@@ -355,6 +355,34 @@ Line336 and Line 344
                         title="All Observed SMP Profiles of the Testing Data", file_name=save_file, profile_name=EXAMPLE_SMP_NAME)
 ```
 
+When using the `testing()` function to evaluate a new (independent) data set, it may happen that not all labels are predicted. This leads to an error, as not all labels are used. To add probabilities of 0 for missing grain types (labels), the following change in the code is necessary:
+In def `testing()` change line 404 to 406:
+
+```
+y_pred, prelim_y_pred_prob, fit_time, score_time = predicting(model, x_train,
+            y_train, x_test, y_test, smp_idx_train, smp_idx_test,
+            unlabelled_data, impl_type, **plot_and_fit_params)
+```
+
+Add after calling prediticng the following if statement:
+
+```
+# searching for missing grain types in prediction
+    missing_grain_types_in_pred = np.array(list(set(np.unique(y_test)) - set(np.unique(y_pred))))
+
+    # when missing grain types in prediction, add probabilities 0 for these
+    if len(missing_grain_types_in_pred) > 0:
+        print("Missing Grain types in pred:", missing_grain_types_in_pred)
+        y_pred_prob = prelim_y_pred_prob
+        for missing_grain_type in np.sort(missing_grain_types_in_pred):
+            position_grain_type = np.argwhere(labels_order==missing_grain_type)[0][0]
+            new_col = np.zeros((prelim_y_pred_prob.shape[0], 1))
+            # add new column with zeros for missing grain type
+            y_pred_prob = np.hstack((y_pred_prob[:,:position_grain_type], new_col, y_pred_prob[:, position_grain_type:]))
+    else:
+        y_pred_prob = prelim_y_pred_prob
+```
+
 ### supervised_models.py
 
 For adaboost is a updated syntax for the spelling in sampeling_strategy. Update in Line 111
