@@ -33,6 +33,18 @@ parentdir = Path(__file__).parent.as_posix()
 IN_DIR = parentdir + "/data/raw_smp_prediction/"
 MARKER_PATH = "data/markers_pred.csv"
 
+_ns_caaml = 'caaml' # XML namespaces
+_ns_gml = 'gml'
+_ns = {_ns_caaml: 'http://caaml.org/Schemas/SnowProfileIACS/v6.0.3', _ns_gml: 'http://www.opengis.net/gml'}
+
+#creating the settings for the export
+settings = {
+    'location_name': 'SMP observation point',
+    'altitude': 0,
+    'slope_exposition': 0,
+    'slope_angle': 0
+}
+
 # save both the pics and the results as .ini files
 def predict_profile(smp, model, data, model_type):
     """ Predict classification of single profile
@@ -197,6 +209,8 @@ def predict_all(unlabelled_dir=IN_DIR, marker_path=MARKER_PATH, mm_window=1, ove
                     #smp_idx_list = [float(smp_idx_str)]
                     smp_idx_float = float(smp_idx_str)
                     smp_labelled(smp, smp_idx_float, file_name=sub_location_plot+smp_idx_str)
+                    #export as caaml
+                    export(settings, derivatives, grain_shapes, smp_idx_float, timestamp, longitude, latitude, altitude, outfile)
                 else:
                     print("Skipping Profile "+ smp_idx_str + " since it contains to many NaNs.")
         #smp_idx_list = [float(smp_idx_str)]
@@ -336,9 +350,10 @@ def save_as_pic():
     # generate picture only for specific profiles
     pass
 
-def export(settings, derivatives, grain_shapes, prof_id, timestamp, smp_serial,
+def export(settings, derivatives, grain_shapes, prof_id, timestamp,
     longitude, latitude, altitude, outfile):
     """Source: https://github.com/slf-dot-ch/snowmicropyn/blob/master/snowmicropyn/serialize/caaml.py
+    Adapted to work in snowdragon 
     CAAML export of an SMP snow profile with forces and derived values. This routing writes
     a CAAML XML file containing:
       - A stratigraphy profile with layers as would be contained in a manual snow profile.
@@ -363,14 +378,15 @@ def export(settings, derivatives, grain_shapes, prof_id, timestamp, smp_serial,
     mm2cm = lambda mm : mm / 10
     m2mm = lambda m : m * 1000
     cm2m = lambda cm : cm / 100
-    parameterization = _get_parameterization_name(derivatives)
+    #parameterization = _get_parameterization_name(derivatives)
+    parameterization = None
 
     # We keep two sets of derivatives: one for the stratigraphy profile with merged layers and
     # one with only basic pre-processing for the embedded density, SSA and hardness profiles
     # (because we don't want only 1 data point per thick layer for the embedded profiles):
-    derivatives = preprocess_lowlevel(derivatives, settings)
-    layer_derivatives, grain_shapes, profile_bottom = preprocess_layers(derivatives,
-        grain_shapes, settings)
+    #derivatives = preprocess_lowlevel(derivatives, settings)
+    #layer_derivatives, grain_shapes, profile_bottom = preprocess_layers(derivatives,
+    #    grain_shapes, settings)
 
     # Meta data:
     root = ET.Element(f'{_ns_caaml}:SnowProfile')
@@ -379,7 +395,7 @@ def export(settings, derivatives, grain_shapes, prof_id, timestamp, smp_serial,
     root.set(f'{_ns_gml}:id', prof_id)
 
     meta_data = ET.SubElement(root, f'{_ns_caaml}:metaData')
-    _addGenericComments(meta_data, parameterization)
+    #_addGenericComments(meta_data, parameterization)
 
     time_ref = ET.SubElement(root, f'{_ns_caaml}:timeRef')
     rec_time = ET.SubElement(time_ref, f'{_ns_caaml}:recordTime')
@@ -389,9 +405,9 @@ def export(settings, derivatives, grain_shapes, prof_id, timestamp, smp_serial,
 
     src_ref = ET.SubElement(root, f'{_ns_caaml}:srcRef')
     src_oper = ET.SubElement(src_ref, f'{_ns_caaml}:Operation')
-    src_oper.set(f'{_ns_gml}:id', 'SMP_serial')
-    src_name = ET.SubElement(src_oper, f'{_ns_caaml}:name')
-    src_name.text = smp_serial
+    #src_oper.set(f'{_ns_gml}:id', 'SMP_serial')
+    #src_name = ET.SubElement(src_oper, f'{_ns_caaml}:name')
+    #src_name.text = smp_serial
 
     loc_ref = ET.SubElement(root, f'{_ns_caaml}:locRef')
     loc_ref.set(f'{_ns_gml}:id', 'LOC_ID')
