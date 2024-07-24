@@ -33,18 +33,6 @@ parentdir = Path(__file__).parent.as_posix()
 IN_DIR = parentdir + "/data/raw_smp_prediction/"
 MARKER_PATH = "data/markers_pred.csv"
 
-_ns_caaml = 'caaml' # XML namespaces
-_ns_gml = 'gml'
-_ns = {_ns_caaml: 'http://caaml.org/Schemas/SnowProfileIACS/v6.0.3', _ns_gml: 'http://www.opengis.net/gml'}
-
-#creating the settings for the export
-settings = {
-    'location_name': 'SMP observation point',
-    'altitude': 0,
-    'slope_exposition': 0,
-    'slope_angle': 0
-}
-
 # save both the pics and the results as .ini files
 def predict_profile(smp, model, data, model_type):
     """ Predict classification of single profile
