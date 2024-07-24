@@ -683,7 +683,7 @@ You can also comment the direct decision which label gets which decision tree la
 
 ### plot_dim_reduction
 
--   the gca() statement was updated. Change the following statements.
+-   the `gca()` statement was updated. Change the following statements.
     Line 81, 145, 210
 
     ```
@@ -693,11 +693,60 @@ You can also comment the direct decision which label gets which decision tree la
 change to
 
     ```
-            fig = plt.figure(figsize=(16,10))
-            ax = fig.add_subplot(projection='3d')
+        fig = plt.figure(figsize=(16,10))
+        ax = fig.add_subplot(projection='3d')
     ```
 
 ## predict.py
 
 For predictions of raw smp files
-... in progress, see commit on Jun 7, 2024
+... in progress, see commit on June 7, 2024
+
+## Integration to snowmicropyn
+
+To get the code base ready for an interaction with snowmicropyn some changes have to be done to adjust the calc funtions of both.
+
+The following changes can be found in the Commit 24July (https://github.com/jil1213/snowdragon-Alps/commit/d818415f646d338c08f0c2561c0d1f3482df6385)
+
+### data_handling/data_parameters.py
+
+To the arguments for Preprocessing (PARAMS) the has to be adapted, Line 106:
+
+    ```
+        "poisson_cols": ["median_force", "lambda", "delta", "L", "Density", "SSA", "Hardness"],
+    ```
+
+### data_handling/data_preprocessing.py
+
+The coulmns Density, SSA and Harndess have to be added to the `poisson_cols` (list).
+For this the comments in Line 256, def `rolling_window()` and in Line 386 def `preprocess_profile()` has to be addapted:
+
+    ```
+        List can include: "distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hardness"
+    ```
+
+also the `Key Error` in Line 288-289:
+
+    ```
+        except KeyError:
+                        print("You can only use a (sub)list of the following features for poisson_cols: distance, median_force, lambda, f0, delta, L, Density, SSA, Hardness")
+    ```
+
+In def `rolling_window()` the List of `poisson_all_colls` in Line 265 has to be adapted:
+
+    ```
+        poisson_all_cols = ["distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hardness"]
+    ```
+
+In def `calc()` (temporary) the columns must be added as zeros to get the complete dataframe. For this add at the end of the function in Line 320:
+
+    ```
+        result = [row + (0, 0, 0) for row in result]
+    ```
+
+Also add the columns to the return statement:
+
+    ```
+        return pd.DataFrame(result, columns=['distance', 'force_median', 'L2012_lambda', 'L2012_f0',
+                                                        'L2012_delta', 'L2012_L', 'Density', 'SSA', 'Hardness'])
+    ```
