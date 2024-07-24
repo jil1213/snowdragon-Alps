@@ -103,7 +103,7 @@ PARAMS = {
     "window_type": "gaussian",
     "window_type_std": 1,
     "rolling_cols": ["mean_force", "var_force", "min_force", "max_force"],
-    "poisson_cols": ["median_force", "lambda", "delta", "L"],
+    "poisson_cols": ["median_force", "lambda", "delta", "L", "Density", "SSA", "Hardness"],
 }
 
 # Colors for the different models

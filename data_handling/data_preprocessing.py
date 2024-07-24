@@ -253,7 +253,7 @@ def rolling_window(df, window_size, rolling_cols, window_type="gaussian", window
             https://docs.scipy.org/doc/scipy/reference/signal.windows.html#module-scipy.signal.windows
         window_type_std (int): std used for window type
         poisson_cols (list): List with names what should be retrieved from the poisson shot model. Default None (nothing included).
-            List can include: "distance", "median_force", "lambda", "f0", "delta", "L"
+            List can include: "distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hardness"
         **kwargs: are catched in case more arguments are given on the commandline (see data_loader)
     Returns:
         pd.DataFrame: concatenated dataframes (original and new rolled ones)
@@ -262,7 +262,7 @@ def rolling_window(df, window_size, rolling_cols, window_type="gaussian", window
     # for the poisson shot model calculations: df can only have cols force and distance
     poisson_df = pd.DataFrame(df[["distance", "mean_force"]])
     poisson_df.columns = ["distance", "force"]
-    poisson_all_cols = ["distance", "median_force", "lambda", "f0", "delta", "L"]
+    poisson_all_cols = ["distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hardness"]
 
     # roll over columns with different window sizes
     for window in window_size:
@@ -286,7 +286,7 @@ def rolling_window(df, window_size, rolling_cols, window_type="gaussian", window
                 poisson_rolled.columns = poisson_all_cols
                 poisson_rolled = poisson_rolled[poisson_cols]
             except KeyError:
-                print("You can only use a (sub)list of the following features for poisson_cols: distance, median_force, lambda, f0, delta, L")
+                print("You can only use a (sub)list of the following features for poisson_cols: distance, median_force, lambda, f0, delta, L, Density, SSA, Hardness")
             # add the poisson data to the all_dfs list and rename columns for distinction
             poisson_rolled.columns = [col + "_" + str(window) for col in poisson_cols]
             all_dfs.append(poisson_rolled)
@@ -318,8 +318,11 @@ def calc(samples, window, overlap):
             sn = loewe2012.calc_step(spatial_res, chunk.force)
         result.append((center, f_median) + sn)
 
+    #Übergangslösung für neue Calc Funktion: 0er Spalten für die drei Parameter Density, SSA, Hardness
+    result = [row + (0, 0, 0) for row in result] #Die Liste hat 341 Zeilen und 9 Spalten. (vorher 6 Spalten)
+
     return pd.DataFrame(result, columns=['distance', 'force_median', 'L2012_lambda', 'L2012_f0',
-                                         'L2012_delta', 'L2012_L'])
+                                         'L2012_delta', 'L2012_L', 'Density', 'SSA', 'Hardness'])
 
 def remove_negatives(df, col="force", threshold=-1):
     """ Remove negative values of a column from dataframe. The values are replaced with the mean of the next and last positive value.
@@ -383,7 +386,7 @@ def preprocess_profile(profile, target_dir, export_as="csv", sum_mm=1, gradient=
             window_type (String): arg for rolling_window function - E.g. Gaussian (default). None is a normal window.
             window_type_std (int): arg for rolling_window function - std used for window type
             poisson_cols (list): arg for rolling_window function - List of features that should be taken from poisson shot model
-                List can include: "distance", "median_force", "lambda", "f0", "delta", "L"
+                List can include: "distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hardness"
     """
 
     # check if this is a labelled profile
