@@ -700,7 +700,137 @@ change to
 ## predict.py
 
 For predictions of raw smp files
-... in progress, see commit on June 7, 2024
+
+Import statements to add:
+
+```
+import pandas as pd
+from visualization.plot_profile import smp_labelled
+from data_handling.data_parameters import ANTI_LABELS, PARAMS, EXP_LOC
+```
+
+The paths have to be adapted in Line30. (To add later in configs)
+
+```
+# make predictions for all files in this folder
+
+parentdir = Path(**file**).parent.as_posix()
+IN_DIR = parentdir + "/data/raw_smp_prediction/"
+MARKER_PATH = "data/markers_pred.csv"
+```
+
+Update the variable marker_path for use:
+
+```
+def predict_all(unlabelled_dir=IN_DIR, marker_path=MARKER_PATH, mm_window=1, overwrite=True):
+```
+
+Update the name of the preprocessed_data file: (Line 130):
+
+```
+with open("data/preprocess_data.txt", "rb") as handle:
+```
+
+When you want to be able to load the markers as an ini (instead of csv), add the function `load_markers_ini`:
+
+```
+def load_markers_ini(marker_path_ini, smp_idx_str):
+    """ Loads and returns sfc and ground markers with profile name as key
+    Parameters:
+        marker_path_ini (Path): where the markers are stored in .ini file
+        smp_idx_str (string): profile name
+    Returns:
+        dict < smp_name: (surface, ground) >: marker dictionary
+    """
+    smp_idx_str = "S45M" +smp_idx_str[3:]
+    file_path = os.path.join(marker_path_ini, f"{smp_idx_str}.ini")
+
+    with open(file_path, 'r') as file:
+        marker_dic = {}
+        for line in file:
+            if line.startswith('surface') or line.startswith('ground'):
+                key, value = line.split('=')
+                marker_dic[key.strip()] = float(value.strip())
+
+    return marker_dic
+```
+
+In def `predict_all()` make the following changes:
+For adapting the folder structure of prediction (before: output/prediftion), now: output/prediction/ini or output/prediction/plot, change sub_location to sub_location_ini(in Line 127following):
+
+```
+sub_location_ini = location + "/" + model_name + "/ini/"
+```
+
+Also add new section afterwards where sublocation for plot is created:
+
+```
+ sub_location_plot = location + "/" + model_name + "/plot/"
+        # make dir if it doesnt exist yet
+        if not os.path.exists(sub_location_plot):
+            os.makedirs(sub_location_plot)
+```
+
+after the prediction, save as dataframe for plot visualization:
+
+```
+labelled_smp_df = pd.DataFrame(labelled_smp, columns=["label"])
+#delete old labels of unlabelled_smp
+unlabelled_smp.drop(columns=["label"], inplace=True)
+#merge unlabelled_smp with labelled_smp to combine all informations for visualization
+smp = pd.concat([unlabelled_smp, labelled_smp_df], axis=1)
+```
+
+When you want to load markers an an ini, add in Line 170 (before prediction starts):
+
+```
+# load markers
+markers = load_markers_ini(unlabelled_dir, smp_idx_str)
+```
+
+Make plot in Line 198 (end of if statement)
+
+```
+smp_idx_float = float(smp_idx_str)
+smp_labelled(smp, smp_idx_float, file_name=sub_location_plot+smp_idx_str)
+```
+
+For markers with ini, change the try: get markers section into(Line 187):
+
+```
+try: # get markers
+sfc, ground = markers["surface"], markers["ground"]
+# save ini
+save_as_ini(labelled_smp, sfc, ground, save_file, model_name, git_id)
+```
+
+In def `save_as_ini` changes from June7, check if necessary
+
+In def `load_profiles` update the export_dir, for example:
+
+```
+export_dir = Path("data/smp_npz_profiles_pred/")
+```
+
+also change filter=False if this occurs an error
+
+When you use different data than the mosaic dataset, comment the following section: (Line 282) normalization
+
+```
+#all_smp = normalize_mosaic(all_smp) #not for other data than mosaic
+```
+
+In def `load_stored_model` update the model file names for keras models: (Line 310)
+
+```
+if model_type == "keras":
+        if model_name != "enc_dec":
+            model_filename = "models/stored_models/" + model_name + ".hdf5"
+            loaded_model = keras.models.load_model(model_filename)
+        else:
+            model_filename = "models/stored_models/" + model_name + ".keras"
+            loaded_model = keras.models.load_model(model_filename, custom_objects={"SeqSelfAttention": SeqSelfAttention})
+```
 
 ## Integration to snowmicropyn
 

@@ -22,7 +22,6 @@ from tuning.tuning_parameters import BEST_PARAMS
 from data_handling.data_parameters import ANTI_LABELS, PARAMS, EXP_LOC
 from data_handling.data_preprocessing import export_pnt, npz_to_pd, search_markers
 
-import xml.etree.ElementTree as ET
 
 # make an argparser for knowing which model should be used
 # and which files should be processed
