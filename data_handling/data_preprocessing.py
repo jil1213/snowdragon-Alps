@@ -243,7 +243,7 @@ def summarize_rows(df, mm_window=1):
                         columns=["distance", "mean_force", "var_force", "min_force", "max_force", "label"])
 
 
-def rolling_window(df, window_size, rolling_cols, window_type="gaussian", window_type_std=1, poisson_cols=None, **kwargs):
+def rolling_window(df, profile, window_size, rolling_cols, window_type="gaussian", window_type_std=1, poisson_cols=None, **kwargs):
     """ Applies one or several rolling windows to a dataframe. Concatenates the different results to a new dataframe.
     Parameters:
         df (pd.DataFrame): Original dataframe over whom we roll.
@@ -262,7 +262,7 @@ def rolling_window(df, window_size, rolling_cols, window_type="gaussian", window
     # for the poisson shot model calculations: df can only have cols force and distance
     poisson_df = pd.DataFrame(df[["distance", "mean_force"]])
     poisson_df.columns = ["distance", "force"]
-    poisson_all_cols = ["distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hardness"]
+    poisson_all_cols = ["distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hand_hardness", "optical_thickness"]
 
     # roll over columns with different window sizes
     for window in window_size:
@@ -282,9 +282,11 @@ def rolling_window(df, window_size, rolling_cols, window_type="gaussian", window
             try:
                 # calculate lambda and delta and media of poisson shot model
                 overlap = (((window - 1) / window) * 100) + 0.0001 # add epsilon to round up 0.0001
-                poisson_rolled = calc(poisson_df, window=window, overlap=overlap) #essentially the loewe2012.calc function
+                poisson_rolled2 = calc(poisson_df, window=window, overlap=overlap) #essentially the loewe2012.calc function
+                poisson_rolled = profile.calc_derivatives(names_with_units=False, hand_hardness=True, optical_thickness=True)
+                #print(derivatives.head(10))
                 poisson_rolled.columns = poisson_all_cols
-                poisson_rolled = poisson_rolled[poisson_cols]
+                poisson_rolled = poisson_rolled[poisson_cols] 
             except KeyError:
                 print("You can only use a (sub)list of the following features for poisson_cols: distance, median_force, lambda, f0, delta, L, Density, SSA, Hardness")
             # add the poisson data to the all_dfs list and rename columns for distinction
@@ -433,7 +435,7 @@ def preprocess_profile(profile, target_dir, export_as="csv", sum_mm=1, gradient=
     df_mm = summarize_rows(df, mm_window=sum_mm)
 
     # 6. rolling window in order to know distribution of next and past values (+ poisson shot model)
-    final_df = rolling_window(df_mm, **params)
+    final_df = rolling_window(df_mm, profile, **params)
 
     # 7.include gradient if wished
     if gradient:
