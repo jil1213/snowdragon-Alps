@@ -838,45 +838,69 @@ To get the code base ready for an interaction with snowmicropyn some changes hav
 
 The following changes can be found in the Commit 24July (https://github.com/jil1213/snowdragon-Alps/commit/d818415f646d338c08f0c2561c0d1f3482df6385)
 
+The adaption for the new calc function can be found in Commit 26August (https://github.com/jil1213/snowdragon-Alps/commit/a2b4a6a900d06fbcc4e9b6c031e61e9e382f466b)
+For this the new def calc_derivatives The function is stored in the branch develop of snowmicropyn(https://github.com/slf-dot-ch/snowmicropyn/blob/develop/snowmicropyn/profile.py#L585)
+
 ### data_handling/data_parameters.py
 
 To the arguments for Preprocessing (PARAMS) the has to be adapted, Line 106:
 
-    ```
-        "poisson_cols": ["median_force", "lambda", "delta", "L", "Density", "SSA", "Hardness"],
-    ```
+```
+    "poisson_cols": ["median_force", "lambda", "delta", "L", "Density", "SSA", "Hand_hardness", "optical_thickness"],
+```
 
 ### data_handling/data_preprocessing.py
 
-The coulmns Density, SSA and Harndess have to be added to the `poisson_cols` (list).
+The coulmns Density, SSA and Harndess have to be added to the `poisson_cols` (list) in data_parameters.py.
 For this the comments in Line 256, def `rolling_window()` and in Line 386 def `preprocess_profile()` has to be addapted:
 
-    ```
-        List can include: "distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hardness"
-    ```
+```
+    List can include: "distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hand_hardness", "optical_thickness
+```
 
 also the `Key Error` in Line 288-289:
 
-    ```
-        except KeyError:
-                        print("You can only use a (sub)list of the following features for poisson_cols: distance, median_force, lambda, f0, delta, L, Density, SSA, Hardness")
-    ```
+```
+    except KeyError:
+                    print("You can only use a (sub)list of the following features for poisson_cols: distance, median_force, lambda, f0, delta, L, Density, SSA, Hand_hardness, optical_thickness")
+```
 
 In def `rolling_window()` the List of `poisson_all_colls` in Line 265 has to be adapted:
 
-    ```
-        poisson_all_cols = ["distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hardness"]
-    ```
+```
+    poisson_all_cols = ["distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hand_hardness", "optical_thickness]
+```
 
 In def `calc()` (temporary) the columns must be added as zeros to get the complete dataframe. For this add at the end of the function in Line 320:
 
-    ```
-        result = [row + (0, 0, 0) for row in result]
-    ```
+```
+    result = [row + (0, 0, 0) for row in result]
+```
 
 Also add the columns to the return statement:
 
-    ```
-        return pd.DataFrame(result, columns=['distance', 'force_median', 'L2012_lambda', 'L2012_f0',
-                                                        'L2012_delta', 'L2012_L', 'Density', 'SSA', 'Hardness'])
-    ```
+```
+    return pd.DataFrame(result, columns=['distance', 'force_median', 'L2012_lambda', 'L2012_f0',
+                                                    'L2012_delta', 'L2012_L', 'Density', 'SSA', 'Hardness'])
+```
+
+To replace the old calc function, the new def `calc()` from snowmicropyn is used. This exists only in the branch develop of snowmicropyn.
+For this make the following changes:
+Add the given profile to the function parameters of `rolling_window()` in Line 246
+
+```
+    def rolling_window(df, profile, window_size, rolling_cols, window_type="gaussian", window_type_std=1, poisson_cols=None, \*\*kwargs):
+```
+
+Also adapt the function call in Line 437 in def `preprocess_profile():`
+
+```
+    # 6. rolling window in order to know distribution of next and past values (+ poisson shot model)
+    final_df = rolling_window(df_mm, profile, **params)
+```
+
+In def `rolling_window()` replace the old Function call of `calc()` in def `calc_derivatives()` in Line 286:
+
+```
+poisson_rolled = profile.calc_derivatives(names_with_units=False, hand_hardness=True, optical_thickness=True)
+```

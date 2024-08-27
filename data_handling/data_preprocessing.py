@@ -288,7 +288,7 @@ def rolling_window(df, profile, window_size, rolling_cols, window_type="gaussian
                 poisson_rolled.columns = poisson_all_cols
                 poisson_rolled = poisson_rolled[poisson_cols] 
             except KeyError:
-                print("You can only use a (sub)list of the following features for poisson_cols: distance, median_force, lambda, f0, delta, L, Density, SSA, Hardness")
+                print("You can only use a (sub)list of the following features for poisson_cols: distance, median_force, lambda, f0, delta, L, Density, SSA, Hand_hardness, optical_thickness")
             # add the poisson data to the all_dfs list and rename columns for distinction
             poisson_rolled.columns = [col + "_" + str(window) for col in poisson_cols]
             all_dfs.append(poisson_rolled)
@@ -388,7 +388,7 @@ def preprocess_profile(profile, target_dir, export_as="csv", sum_mm=1, gradient=
             window_type (String): arg for rolling_window function - E.g. Gaussian (default). None is a normal window.
             window_type_std (int): arg for rolling_window function - std used for window type
             poisson_cols (list): arg for rolling_window function - List of features that should be taken from poisson shot model
-                List can include: "distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hardness"
+                List can include: "distance", "median_force", "lambda", "f0", "delta", "L", "Density", "SSA", "Hand_hardness", "optical_thickness"
     """
 
     # check if this is a labelled profile
